@@ -13,13 +13,13 @@ public class Player : MonoBehaviour {
 	};
 
 	[SerializeField]
-	private GameObject rightController = null;
+	private GameObject objectHoldPosition = null;
 	private GameObject heldObject = null;
 
 	private void Update() {
 		if (heldObject) {
 			// Check if our held object has been taken out of our hands.
-			if (heldObject.transform.parent.gameObject != rightController) {
+			if (heldObject.transform.parent.gameObject != objectHoldPosition) {
 				DropObject();
 				return;
 			}
@@ -29,8 +29,7 @@ public class Player : MonoBehaviour {
 			heldObject.transform.position = heldObject.transform.parent.position;
 		}
 
-		if (Input.GetKeyDown(KeyCode.E) ||
-			Input.GetAxis("Right Controller Trigger (7)") > 0) {
+		if (Input.GetKeyDown(KeyCode.E)) {
 			if (!heldObject) {
 				Transform cameraTransform = Camera.main.gameObject.transform;
 				RaycastHit raycastHitInfo;
@@ -58,7 +57,7 @@ public class Player : MonoBehaviour {
 	/// <param name="toPickup"> The gameObject to put in the player's right hand. </param>
 	private void PickupObject(GameObject toPickup) {
 		heldObject = toPickup;
-		heldObject.transform.SetParent(rightController.transform, true);
+		heldObject.transform.SetParent(objectHoldPosition.transform, true);
 
 		if (heldObject.CompareTag("Mug") ||
 			heldObject.CompareTag("Tea") ||
