@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
 public class Player : MonoBehaviour {
+	private float canPickupTimer = 0.0f;
+	private bool canPickup = true;
 	private string[] interactableObjects = {
 		"TeaBag",
 		"CoffeeBag",
@@ -17,6 +19,13 @@ public class Player : MonoBehaviour {
 	private GameObject heldObject = null;
 
 	private void Update() {
+		if (!canPickup && canPickupTimer > 0.0f) {
+			canPickupTimer -= Time.deltaTime;
+		} else if (canPickupTimer <= 0.0f) {
+			canPickup = true;
+			canPickupTimer = 0.2f;
+		}
+
 		if (heldObject) {
 			// Check if our held object has been taken out of our hands.
 			if (heldObject.transform.parent.gameObject != objectHoldPosition) {
@@ -30,7 +39,8 @@ public class Player : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown(KeyCode.E)) {
-			if (!heldObject) {
+			if (canPickup && !heldObject) {
+				canPickup = false;
 				Transform cameraTransform = Camera.main.gameObject.transform;
 				RaycastHit raycastHitInfo;
 				// Casts a ray forward of the main camera's position.
