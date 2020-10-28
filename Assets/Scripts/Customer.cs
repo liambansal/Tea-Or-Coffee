@@ -41,7 +41,7 @@ public class Customer : MonoBehaviour {
 		if (OpenOrder &&
 			(other.gameObject.CompareTag("Tea") ||
 			other.gameObject.CompareTag("Coffee"))) {
-			GameObject player = other.gameObject.transform.parent.parent.gameObject;
+			GameObject player = GameObject.FindGameObjectWithTag("Red");
 			// Update the player's score.
 			GameObject.FindGameObjectWithTag(player.tag + " Score").GetComponent<Score>().IncrementScore();
 			heldObject = other.gameObject;
