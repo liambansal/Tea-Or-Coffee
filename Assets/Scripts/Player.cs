@@ -5,9 +5,9 @@ public class Player : MonoBehaviour {
 	private bool canPickup = true;
 	private string[] interactableObjects = {
 		"TeaBag",
-		"CoffeeBag",
+		"CoffeeTin",
 		"Sugar",
-		"BoilingWater",
+		"Water",
 		"Milk",
 		"Mug",
 		"Tea",
@@ -50,8 +50,7 @@ public class Player : MonoBehaviour {
 
 				// Checks if the ray collided with any interactable objects.
 				foreach (string item in interactableObjects) {
-					// TODO FIX: causes error when there's nothing to cast a ray against.
-					if (raycastHitInfo.collider.CompareTag(item)) {
+					if (raycastHitInfo.collider && raycastHitInfo.collider.CompareTag(item)) {
 						PickupObject(raycastHitInfo.collider.gameObject);
 					}
 				}

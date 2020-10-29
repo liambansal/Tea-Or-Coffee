@@ -10,7 +10,7 @@ public class Mug : MonoBehaviour {
 	private string[] ingredients = {
 		"TeaBag",
 		"Sugar",
-		"BoilingWater",
+		"Water",
 		"Milk"
 	};
 
@@ -72,7 +72,7 @@ public class Mug : MonoBehaviour {
 
 		if (brewState == BREW_STATES.BREWED) {
 			gameObject.tag = "Tea";
-			const float yScale = 1.1f;
+			const float yScale = 0.55f;
 			// Set a new y scale for the mug's liquid now it's brewed.
 			mugLiquid.transform.localScale =
 				new Vector3(mugLiquid.transform.localScale.x,

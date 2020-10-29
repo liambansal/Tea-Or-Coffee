@@ -6,7 +6,6 @@ TagManager:
   tags:
   - Sugar
   - Mug
-  - BoilingWater
   - TeaBag
   - Milk
   - Customer
@@ -17,7 +16,8 @@ TagManager:
   - Delivered
   - Tea
   - Coffee
-  - CoffeeBag
+  - CoffeeTin
+  - Water
   layers:
   - Default
   - TransparentFX
