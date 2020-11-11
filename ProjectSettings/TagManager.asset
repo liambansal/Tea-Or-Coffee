@@ -18,6 +18,7 @@ TagManager:
   - Coffee
   - CoffeeTin
   - Water
+  - Customer Manager
   layers:
   - Default
   - TransparentFX
