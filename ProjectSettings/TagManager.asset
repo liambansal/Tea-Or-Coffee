@@ -19,6 +19,9 @@ TagManager:
   - CoffeeTin
   - Water
   - Customer Manager
+  - RoadStart
+  - RoadEnd
+  - Exit
   layers:
   - Default
   - TransparentFX
@@ -28,8 +31,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Road
+  - RoadBoundaries
   - 
   - 
   - 

@@ -7,17 +7,26 @@ public class Customer : MonoBehaviour {
 
 	private int orderNumber = 0;
 
+	/// <summary>
+	/// The diameter/longest length of a customer's collider.
+	/// </summary>
+	[SerializeField]
+	private float customerLength = 1.0f;
+	/// <summary>
+	/// Amount of space between customers.
+	/// </summary>
+	[SerializeField]
+	private float margin = 1.0f;
+
 	private string[] possibleOrder = {
 		"Tea",
 		"Coffee"
 	};
 
 	private Vector3 queuePosition = Vector3.zero;
+	private Vector3 sceneExit = Vector3.zero;
 
 	private CustomerManager manager = null;
-
-	[SerializeField]
-	private Transform exit;
 
 	private GameObject heldObject = null;
 
@@ -41,15 +50,16 @@ public class Customer : MonoBehaviour {
 		if (manager.queue.Find(gameObject).Previous != null) {
 			queuePosition =
 				manager.queue.Find(gameObject).Previous.Value.GetComponent<Customer>().queuePosition +
-				(manager.queueDirection *
-				(GetComponent<CapsuleCollider>().radius *
-				2));
+				manager.queueDirection *
+				(customerLength +
+				margin);
 		} else {
 			// Calculate the last position in the queue.
-			queuePosition = manager.queueStart.position;
+			queuePosition = manager.QueueStart.position;
 		}
 
 		gameObject.GetComponent<NavMeshAgent>().SetDestination(queuePosition);
+		sceneExit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Transform>().position;
 	}
 
 	private void Update() {
@@ -59,24 +69,28 @@ public class Customer : MonoBehaviour {
 				heldObject.transform.position = transform.position + transform.forward;
 			}
 
-			gameObject.GetComponent<NavMeshAgent>().SetDestination(exit.position);
+			gameObject.GetComponent<NavMeshAgent>().SetDestination(sceneExit);
 		}
 	}
 
-	private void OnTriggerEnter(Collider other) {
+	private void OnTriggerEnter(Collider collider) {
 		if (OpenOrder &&
-			(other.gameObject.CompareTag("Tea") ||
-			other.gameObject.CompareTag("Coffee"))) {
+			(collider.gameObject.CompareTag("Tea") ||
+			collider.gameObject.CompareTag("Coffee"))) {
 			GameObject player = GameObject.FindGameObjectWithTag("Red");
 			// Update the player's score.
 			GameObject.FindGameObjectWithTag(player.tag + " Score").GetComponent<Score>().IncrementScore();
-			heldObject = other.gameObject;
+			heldObject = collider.gameObject;
 			// Set the mug's parent to the customer.
 			heldObject.transform.SetParent(gameObject.transform, true);
 			OpenOrder = false;
 			// Change the mug's tag so players can't interact with it after it delivered to a 
 			// customer.
 			heldObject.tag = "Delivered";
+		}
+
+		if (collider.gameObject.CompareTag("Exit")) {
+			Destroy(gameObject);
 		}
 	}
 }
