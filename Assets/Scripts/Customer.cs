@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class Customer : MonoBehaviour {
+public class Customer : CustomerManager {
 	public string Order { get; private set; } = "";
 	public bool OpenOrder { get; private set; } = true;
 
@@ -47,18 +47,7 @@ public class Customer : MonoBehaviour {
 			}
 		}
 
-		if (manager.queue.Find(gameObject).Previous != null) {
-			queuePosition =
-				manager.queue.Find(gameObject).Previous.Value.GetComponent<Customer>().queuePosition +
-				manager.queueDirection *
-				(customerLength +
-				margin);
-		} else {
-			// Calculate the last position in the queue.
-			queuePosition = manager.QueueStart.position;
-		}
-
-		gameObject.GetComponent<NavMeshAgent>().SetDestination(queuePosition);
+		SetQueuePosition();
 		sceneExit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Transform>().position;
 	}
 
@@ -90,7 +79,29 @@ public class Customer : MonoBehaviour {
 		}
 
 		if (collider.gameObject.CompareTag("Exit")) {
+			if (Queue.Contains(gameObject)) {
+				UpdateQueue();
+			}
+
 			Destroy(gameObject);
 		}
+	}
+
+	/// <summary>
+	/// Sets a queue position for the customer and set's it as their target destination.
+	/// </summary>
+	public void SetQueuePosition() {
+		if (Queue.Find(gameObject).Previous != null) {
+			queuePosition =
+				Queue.Find(gameObject).Previous.Value.GetComponent<Customer>().queuePosition +
+				manager.queueDirection *
+				(customerLength +
+				margin);
+		} else {
+			// Calculate the last position in the queue.
+			queuePosition = manager.QueueStart.position;
+		}
+
+		gameObject.GetComponent<NavMeshAgent>().SetDestination(queuePosition);
 	}
 }

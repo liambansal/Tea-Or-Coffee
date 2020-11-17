@@ -123,8 +123,8 @@ NavMeshAgent:
   m_GameObject: {fileID: 6877318852855351729}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5000001
-  m_Speed: 3.5
+  m_Radius: 0.75
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -148,7 +148,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21ec6eecb2b5bbf42bb8c84f725f721a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exit: {fileID: 125362666371342084, guid: c7c564c8bcf394f40bcd3be50b7c6b7d, type: 3}
+  queueDirect: {x: 0, y: 0, z: -1}
+  spawn: {fileID: 0}
+  queueStart: {fileID: 0}
+  customer: {fileID: 0}
+  customerLength: 1
+  margin: 1
 --- !u!1 &8172902953963330261
 GameObject:
   m_ObjectHideFlags: 0
