@@ -11,7 +11,7 @@ public class OrderCard : MonoBehaviour {
 
 	private Beverages.Beverage beverage;
 
-	public OrderCard(Beverages.Beverage setBeverage) {
+	public void SetOrder(Beverages.Beverage setBeverage) {
 		beverage = setBeverage;
 		beverageImage.sprite = beverage.image;
 	}

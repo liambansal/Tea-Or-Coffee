@@ -18,6 +18,8 @@ public class Customer : CustomerManager {
 	[SerializeField]
 	private float margin = 1.0f;
 
+	private bool spawnedCard = false;
+
 	private string[] possibleOrder = {
 		"Tea",
 		"Coffee"
@@ -28,6 +30,8 @@ public class Customer : CustomerManager {
 
 	private CustomerManager manager = null;
 
+	[SerializeField]
+	private GameObject orderCard = null;
 	private GameObject heldObject = null;
 
 	private void Awake() {
@@ -59,6 +63,16 @@ public class Customer : CustomerManager {
 			}
 
 			gameObject.GetComponent<NavMeshAgent>().SetDestination(sceneExit);
+		} else {
+			if (!spawnedCard && 
+				queuePosition == manager.QueueStart.position &&
+				transform.position.x == GetComponent<NavMeshAgent>().destination.x &&
+				transform.position.z == GetComponent<NavMeshAgent>().destination.z) {
+				orderCard.GetComponent<OrderCard>().SetOrder(Beverages.beverages["Tea"]);
+				float forwardDistance = 1.5f;
+				orderCard = Instantiate(orderCard, transform.position + transform.forward * forwardDistance, Quaternion.identity);
+				spawnedCard = true;
+			}
 		}
 	}
 
@@ -83,6 +97,7 @@ public class Customer : CustomerManager {
 				UpdateQueue();
 			}
 
+			Destroy(orderCard);
 			Destroy(gameObject);
 		}
 	}

@@ -154,6 +154,8 @@ MonoBehaviour:
   customer: {fileID: 0}
   customerLength: 1
   margin: 1
+  orderCard: {fileID: 392997647583499784, guid: 38b316d0c60658d489eaeac2367a7ed4,
+    type: 3}
 --- !u!1 &8172902953963330261
 GameObject:
   m_ObjectHideFlags: 0
