@@ -129,6 +129,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ingredientList: {fileID: 7563629164371166454}
   beverageImage: {fileID: 2250251486639956419}
+  ingredientImage: {fileID: 8722963161278068317, guid: 564eac2a19965454eb6b2ac656721ba0,
+    type: 3}
 --- !u!114 &1369989306699719498
 MonoBehaviour:
   m_ObjectHideFlags: 0

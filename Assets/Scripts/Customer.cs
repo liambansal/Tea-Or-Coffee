@@ -66,11 +66,11 @@ public class Customer : CustomerManager {
 		} else {
 			if (!spawnedCard && 
 				queuePosition == manager.QueueStart.position &&
-				transform.position.x == GetComponent<NavMeshAgent>().destination.x &&
-				transform.position.z == GetComponent<NavMeshAgent>().destination.z) {
-				orderCard.GetComponent<OrderCard>().SetOrder(Beverages.beverages["Tea"]);
+				Mathf.Approximately(transform.position.x, GetComponent<NavMeshAgent>().destination.x) &&
+				Mathf.Approximately(transform.position.z, GetComponent<NavMeshAgent>().destination.z)) {
 				float forwardDistance = 1.5f;
 				orderCard = Instantiate(orderCard, transform.position + transform.forward * forwardDistance, Quaternion.identity);
+				orderCard.GetComponent<OrderCard>().SetOrder(Beverages.beverages["Tea"]);
 				spawnedCard = true;
 			}
 		}
