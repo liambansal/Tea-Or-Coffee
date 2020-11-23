@@ -37,6 +37,19 @@ public class Mug : MonoBehaviour {
 		}
 	}
 
+	private void Update() {
+		if (brewState == BREW_STATES.BREWED) {
+			gameObject.tag = "Tea";
+			const float zStart = 0.0f;
+			const float zEnd = 1.1f;
+			// Slowly raises the level of liquid within the mug. Z is pointing up.
+			mugLiquid.transform.localPosition =
+				new Vector3(mugLiquid.transform.localPosition.x,
+				mugLiquid.transform.localPosition.y,
+				Mathf.Lerp(zStart, zEnd, mugLiquid.transform.localPosition.z + Time.deltaTime));
+		}
+	}
+
 	private void OnCollisionEnter(Collision collision) {
 		foreach (Ingredient ingredient in recipeList) {
 			// Checks for a collision with an ingredient gameObject.
@@ -68,17 +81,6 @@ public class Mug : MonoBehaviour {
 			} else {
 				brewState = BREW_STATES.BREWED;
 			}
-		}
-
-		if (brewState == BREW_STATES.BREWED) {
-			gameObject.tag = "Tea";
-			const float yScale = 0.55f;
-			// Set a new y scale for the mug's liquid now it's brewed.
-			mugLiquid.transform.localScale =
-				new Vector3(mugLiquid.transform.localScale.x,
-				yScale,
-				mugLiquid.transform.localScale.z);
-			// TODO: In the future we could grow the mug liquid as ingredients are put in.
 		}
 	}
 

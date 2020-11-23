@@ -22,6 +22,9 @@ TagManager:
   - RoadStart
   - RoadEnd
   - Exit
+  - projectile
+  - FxTemporaire
+  - Order Card
   layers:
   - Default
   - TransparentFX

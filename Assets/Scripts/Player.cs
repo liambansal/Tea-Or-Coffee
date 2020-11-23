@@ -11,7 +11,8 @@ public class Player : MonoBehaviour {
 		"Milk",
 		"Mug",
 		"Tea",
-		"Coffee"
+		"Coffee",
+		"Order Card"
 	};
 
 	[SerializeField]

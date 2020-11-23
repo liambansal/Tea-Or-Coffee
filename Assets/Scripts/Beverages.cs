@@ -33,21 +33,21 @@ public class Beverages : MonoBehaviour {
 	static public Dictionary<string, Beverage> beverages { get; private set; } = new Dictionary<string, Beverage>() {
 		{ "Tea", new Beverage("Tea",
 			new Ingredient[4] {
-				new Ingredient("TeaBag", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite))),
-				new Ingredient("Sugar", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite))),
-				new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite))),
-				new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite)))
+				new Ingredient("TeaBag", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Tea.png", typeof(Sprite))),
+				new Ingredient("Sugar", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Sugar.png", typeof(Sprite))),
+				new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite))),
+				new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Milk.png", typeof(Sprite)))
 			},
-			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite)))
+			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite)))
 		},
 		{ "Coffee", new Beverage("Coffee",
 			new Ingredient[4] {
-				new Ingredient("Coffee", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite))),
-				new Ingredient("Sugar", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite))),
-				new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite))),
-				new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite)))
+				new Ingredient("Coffee", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Coffee.png", typeof(Sprite))),
+				new Ingredient("Sugar", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Sugar.png", typeof(Sprite))),
+				new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite))),
+				new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Milk.png", typeof(Sprite)))
 			},
-			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Standard Assets/CrossPlatformInput/Sprites/ButtonAcceleratorOverSprite.png", typeof(Sprite)))
+			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite)))
 		}
 	};
 }
