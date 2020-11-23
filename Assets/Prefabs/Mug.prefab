@@ -92,10 +92,10 @@ GameObject:
   - component: {fileID: 3277697223024436908}
   - component: {fileID: 2040632896521272900}
   - component: {fileID: -2516529165389540067}
-  - component: {fileID: 5680601451109425984}
   - component: {fileID: -7930940794344557243}
   - component: {fileID: -6155493048350135720}
   - component: {fileID: 8195954028487798768}
+  - component: {fileID: 5680601451109425984}
   m_Layer: 0
   m_Name: Mug
   m_TagString: Mug
@@ -195,19 +195,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5680601451109425984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3837188166326276720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 928ff76f01969dd46a85279259d653bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mugLiquid: {fileID: 2619845503880427786}
 --- !u!114 &-7930940794344557243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,3 +316,16 @@ MonoBehaviour:
   velocityAverageFrames: 5
   angularVelocityAverageFrames: 11
   estimateOnAwake: 0
+--- !u!114 &5680601451109425984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3837188166326276720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 928ff76f01969dd46a85279259d653bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mugLiquid: {fileID: 2619845503880427786}
