@@ -38,7 +38,7 @@ public class Beverages : MonoBehaviour {
 				new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite))),
 				new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Milk.png", typeof(Sprite)))
 			},
-			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite)))
+			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Cup of Tea.png", typeof(Sprite)))
 		},
 		{ "Coffee", new Beverage("Coffee",
 			new Ingredient[4] {
@@ -47,7 +47,7 @@ public class Beverages : MonoBehaviour {
 				new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite))),
 				new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Milk.png", typeof(Sprite)))
 			},
-			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite)))
+			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Cup of Coffee.png", typeof(Sprite)))
 		}
 	};
 }
