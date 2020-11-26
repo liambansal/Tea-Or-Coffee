@@ -40,13 +40,20 @@ public class Customer : CustomerManager {
 	}
 
 	private void Start() {
-		switch (orderNumber.ToString()) {
-			case "zero": {
+		switch (orderNumber) {
+			// Tea
+			case 0: {
 				Order = possibleOrder[orderNumber];
 				break;
 			}
-			case "one": {
+			// Coffee
+			case 1: {
 				Order = possibleOrder[orderNumber];
+				break;
+			}
+			// Defaults to tea.
+			default: {
+				Order = possibleOrder[0];
 				break;
 			}
 		}
@@ -70,7 +77,7 @@ public class Customer : CustomerManager {
 				Mathf.Approximately(transform.position.z, GetComponent<NavMeshAgent>().destination.z)) {
 				float forwardDistance = 1.5f;
 				orderCard = Instantiate(orderCard, transform.position + transform.forward * forwardDistance, Quaternion.identity);
-				orderCard.GetComponent<OrderCard>().SetOrder(Beverages.beverages["Tea"]);
+				orderCard.GetComponent<OrderCard>().SetOrder(Beverages.beverages[Order]);
 				spawnedCard = true;
 			}
 		}

@@ -18,6 +18,7 @@ public class Player : MonoBehaviour {
 	[SerializeField]
 	private GameObject objectHoldPosition = null;
 	private GameObject heldObject = null;
+	private GameObject heldObjectParent = null;
 
 	private void Update() {
 		if (!canPickup && canPickupTimer > 0.0f) {
@@ -37,6 +38,7 @@ public class Player : MonoBehaviour {
 			// Update our held objects rotation and poisition.
 			heldObject.transform.rotation = Quaternion.identity;
 			heldObject.transform.position = heldObject.transform.parent.position;
+			heldObjectParent.transform.position = heldObject.transform.parent.position;
 		}
 
 		if (Input.GetKeyDown(KeyCode.E)) {
@@ -67,7 +69,8 @@ public class Player : MonoBehaviour {
 	/// <param name="toPickup"> The gameObject to put in the player's right hand. </param>
 	private void PickupObject(GameObject toPickup) {
 		heldObject = toPickup;
-		heldObject.transform.SetParent(objectHoldPosition.transform, true);
+		heldObjectParent = heldObject.transform.parent.gameObject;
+		heldObject.transform.SetParent(objectHoldPosition.transform);
 
 		if (heldObject.CompareTag("Mug") ||
 			heldObject.CompareTag("Tea") ||
@@ -78,7 +81,9 @@ public class Player : MonoBehaviour {
 	}
 
 	private void DropObject() {
-		heldObject.transform.SetParent(null, true);
+		heldObjectParent.GetComponent<Rigidbody>().velocity = Vector3.zero;
+		heldObjectParent.transform.position = heldObject.transform.position;
+		heldObject.transform.SetParent(heldObjectParent.transform);
 		heldObject = null;
 	}
 }

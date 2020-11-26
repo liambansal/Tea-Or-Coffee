@@ -50,7 +50,7 @@ public class Mug : MonoBehaviour {
 		}
 	}
 
-	private void OnCollisionEnter(Collision collision) {
+	private void OnTriggerEnter(Collider collision) {
 		foreach (Ingredient ingredient in recipeList) {
 			// Checks for a collision with an ingredient gameObject.
 			if (collision.gameObject.CompareTag(ingredient.name)) {
@@ -58,7 +58,7 @@ public class Mug : MonoBehaviour {
 				if (!ingredient.added) {
 					AddIngredient(ingredient);
 					// Destroy the ingredient.
-					Destroy(collision.gameObject);
+					Destroy(collision.gameObject.transform.parent.gameObject);
 					UpdateBrewState();
 				}
 			}
