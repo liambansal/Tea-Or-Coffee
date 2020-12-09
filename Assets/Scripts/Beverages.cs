@@ -3,6 +3,38 @@ using UnityEditor;
 using UnityEngine;
 
 public class Beverages : MonoBehaviour {
+	/// <summary>
+	/// Possible beverages to create.
+	/// </summary>
+	static public Dictionary<string, Beverage> beverages { get; private set; } = new Dictionary<string, Beverage>() {
+		{ "Tea", new Beverage("Tea",
+			new Ingredient[4] {
+				new Ingredient("TeaBag", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Tea Bag.png", typeof(Sprite))),
+				new Ingredient("Sugar", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Sugar.png", typeof(Sprite))),
+				new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite))),
+				new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Milk.png", typeof(Sprite)))
+			},
+			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Cup of Tea.png", typeof(Sprite)))
+		},
+		{ "Coffee", new Beverage("Coffee",
+			new Ingredient[4] {
+				new Ingredient("Coffee", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Coffee.png", typeof(Sprite))),
+				new Ingredient("Sugar", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Sugar.png", typeof(Sprite))),
+				new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite))),
+				new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Milk.png", typeof(Sprite)))
+			},
+			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Cup of Coffee.png", typeof(Sprite)))
+		}
+	};
+
+	//public Ingredient[] ingredientList { get; private set; } = {
+	//	teaBag,
+	//	coffee,
+	//	sugar,
+	//	water,
+	//	milk
+	//};
+
 	public struct Ingredient {
 		public string name;
 		public bool isAdded;
@@ -24,30 +56,6 @@ public class Beverages : MonoBehaviour {
 			name = newName;
 			ingredients = newIngredients;
 			image = newImage;
-		}
-	};
-
-	static private Ingredient teaBag = new Ingredient("TeaBag", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Tea Bag.png", typeof(Sprite)));
-	static private Ingredient coffee = new Ingredient("Coffee", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Coffee.png", typeof(Sprite)));
-	static private Ingredient sugar = new Ingredient("Sugar", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Sugar.png", typeof(Sprite)));
-	static private Ingredient water = new Ingredient("Water", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Water.png", typeof(Sprite)));
-	static private Ingredient milk = new Ingredient("Milk", false, (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Milk.png", typeof(Sprite)));
-
-	/// <summary>
-	/// List of possible beverages to create.
-	/// </summary>
-	static public Dictionary<string, Beverage> beverages { get; private set; } = new Dictionary<string, Beverage>() {
-		{ "Tea", new Beverage("Tea",
-			new Ingredient[4] {
-				teaBag, sugar, water, milk
-			},
-			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Cup of Tea.png", typeof(Sprite)))
-		},
-		{ "Coffee", new Beverage("Coffee",
-			new Ingredient[4] {
-				coffee, sugar, 	water, milk
-			},
-			(Sprite)AssetDatabase.LoadAssetAtPath("Assets/Textures/Cup of Coffee.png", typeof(Sprite)))
 		}
 	};
 }

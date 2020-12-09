@@ -10,17 +10,19 @@ public class Mug : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject mugLiquid = null;
-	private GameObject playerHoldingMug;
+	private GameObject playerHoldingMug = null;
 
 	// TODO: create list to hold currently added ingredients instead of checing them off a premade beverage ingredient array.
 
 	public void PlayerPickedUpMug() {
-		// Mug inheritence is as follows: Player > Hand > Mug.
-		playerHoldingMug = gameObject.transform.parent.parent.gameObject;
+		playerHoldingMug = gameObject.transform.root.gameObject;
 	}
 
 	private void Start() {
-		beverage = Beverages.beverages["Tea"];
+		beverage.name = Beverages.beverages["Tea"].name;
+		beverage.ingredients = new Beverages.Ingredient[Beverages.beverages["Tea"].ingredients.Length];
+		Beverages.beverages["Tea"].ingredients.CopyTo(beverage.ingredients, 0);
+		beverage.image = Beverages.beverages["Tea"].image;
 	}
 
 	private void Update() {
@@ -84,5 +86,5 @@ public class Mug : MonoBehaviour {
 			// TODO: check if all ingredients are added.
 			// TODO: check which one of two (or more) beverages have more ingredients that are all added.
 		}
-	}	
+	}
 }
