@@ -24,6 +24,6 @@ public class IngredientSpawner : MonoBehaviour {
 	}
 
 	private void SpawnIngredient() {
-		spawnedIngredient = Instantiate(ingredient, spawn.position, Quaternion.identity);
+		spawnedIngredient = Instantiate(ingredient, spawn.position, Quaternion.LookRotation(Vector3.up, Vector3.forward));
 	}
 }
