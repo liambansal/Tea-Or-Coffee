@@ -75,8 +75,8 @@ public class Customer : CustomerManager {
 				queuePosition == manager.QueueStart.position &&
 				Mathf.Approximately(transform.position.x, GetComponent<NavMeshAgent>().destination.x) &&
 				Mathf.Approximately(transform.position.z, GetComponent<NavMeshAgent>().destination.z)) {
-				float forwardDistance = 1.5f;
-				orderCard = Instantiate(orderCard, transform.position + transform.forward * forwardDistance, Quaternion.identity);
+				float forwardDistance = 2.0f;
+				orderCard = Instantiate(orderCard, transform.position + Vector3.right * forwardDistance, Quaternion.identity);
 				orderCard.GetComponent<OrderCard>().SetOrder(Beverages.beverages[Order]);
 				spawnedCard = true;
 			}
