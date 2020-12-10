@@ -71,13 +71,6 @@ public class Player : MonoBehaviour {
 		heldObject = toPickup;
 		heldObjectParent = heldObject.transform.parent.gameObject;
 		heldObject.transform.SetParent(objectHoldPosition.transform);
-
-		if (heldObject.CompareTag("Mug") ||
-			heldObject.CompareTag("Tea") ||
-			heldObject.CompareTag("Coffee")) {
-			// Saves which player is holding the mug. For scoring purposes.
-			heldObject.GetComponent<Mug>().PlayerPickedUpMug();
-		}
 	}
 
 	private void DropObject() {

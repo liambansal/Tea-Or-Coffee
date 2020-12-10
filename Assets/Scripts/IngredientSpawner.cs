@@ -14,7 +14,7 @@ public class IngredientSpawner : MonoBehaviour {
 			SpawnIngredient();
 			respawnTime = Mathf.Infinity;
 		} else {
-			if (respawnTime == Mathf.Infinity && spawnedIngredient.transform.root.gameObject != spawnedIngredient) {
+			if (respawnTime == Mathf.Infinity && Vector3.Distance(gameObject.transform.position, spawnedIngredient.transform.position) > 1.0f) {
 				const int seconds = 3;
 				respawnTime = seconds;
 			}

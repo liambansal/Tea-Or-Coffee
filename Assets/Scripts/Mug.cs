@@ -10,13 +10,8 @@ public class Mug : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject mugLiquid = null;
-	private GameObject playerHoldingMug = null;
 
 	// TODO: create list to hold currently added ingredients instead of checing them off a premade beverage ingredient array.
-
-	public void PlayerPickedUpMug() {
-		playerHoldingMug = gameObject.transform.root.gameObject;
-	}
 
 	private void Start() {
 		beverage.name = Beverages.beverages["Tea"].name;
