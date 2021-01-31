@@ -25,6 +25,8 @@ TagManager:
   - projectile
   - FxTemporaire
   - Order Card
+  - BuildersBrew
+  - Spoiled
   layers:
   - Default
   - TransparentFX
