@@ -11,19 +11,9 @@ public class Button : MonoBehaviour {
 	/// Tube to spawn an item.
 	/// </summary>
 	[SerializeField]
-	private Dispenser itemTube = null;
+	private Dispenser dispenser = null;
 
-	private void Update() {
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			Debug.Log("Press");
-			itemTube.Dispense(itemToSpawn);
-		}
-	}
-
-	private void OnTriggerEnter(Collider other) {
-		if (other.gameObject.CompareTag("Hand")) {
-			Debug.Log("Press");
-			itemTube.Dispense(itemToSpawn);
-		}
+	public void OnButtonDown() {
+		dispenser.Dispense(itemToSpawn);
 	}
 }
