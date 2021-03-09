@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Pressable button for VR hand interaction. Execute command on press.
-/// </summary>
-public class Button : MonoBehaviour {
-	[SerializeField]
-	private string itemToSpawn = "";
+public interface IButton {
+	void ButtonPressed(Button caller);
+}
 
+public class Button : MonoBehaviour, IButton {
 	/// <summary>
-	/// Tube to spawn an item.
+	/// The object receiving a call from the button.
 	/// </summary>
 	[SerializeField]
-	private Dispenser dispenser = null;
+	private GameObject[] receivers = { null };
 
-	public void OnButtonDown() {
-		dispenser.Dispense(itemToSpawn);
+	public void ButtonPressed(Button caller) {
+		foreach (GameObject receiver in receivers) {
+			receiver.GetComponent<IButton>().ButtonPressed(this);
+		}
 	}
 }
