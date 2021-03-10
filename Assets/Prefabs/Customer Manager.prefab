@@ -43,7 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 675fa7c0ff0304e49bd39ea40f3b7cf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawn: {fileID: 0}
-  queueStart: {fileID: 0}
-  customer: {fileID: 6877318852855351729, guid: 2890f3b7bb793b84da01c3e441ccc29c,
+  spawn: {fileID: 7882581768524094297, guid: a01f0ff5558e78f439b332ea1d1fe472, type: 3}
+  queueStart: {fileID: 2226560394861230315, guid: 5009a48685ae28c45881b705d0699fa3,
+    type: 3}
+  customerPrefab: {fileID: 6877318852855351729, guid: 2890f3b7bb793b84da01c3e441ccc29c,
     type: 3}
