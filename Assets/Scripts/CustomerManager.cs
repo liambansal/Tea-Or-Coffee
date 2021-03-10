@@ -1,72 +1,104 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class CustomerManager : MonoBehaviour
-{
+public class CustomerManager : MonoBehaviour {
+	public LinkedList<GameObject> Queue { get; private set; } = new LinkedList<GameObject>();
+	public Transform QueueStart { get; private set; } = null;
+
+	private int spawnTime = 0;
+	private int lastSpawnTime = 0;
+	private int maxCustomers = 20;
+	private int maximumQueuePositions = 5;
 	/// <summary>
-	/// The worlds-space direction of the queue.
+	/// Distance in between queue positions.
 	/// </summary>
-	public Vector3 queueDirection { get; private set; } = Vector3.zero;
+	private int queueGap = 3;
+
+	private Vector3 queueDirection = Vector3.zero;
+
+	private LinkedList<GameObject> customers = new LinkedList<GameObject>();
+	private LinkedList<GameObject> emptyChairs = new LinkedList<GameObject>();
+	private LinkedList<GameObject> occupiedChairs = new LinkedList<GameObject>();
+
+	private Clock clock = null;
+	private GameStateManager gameStateManager = null;
 	
-	public static LinkedList<GameObject> Queue { get; private set; } = new LinkedList<GameObject>();
-
-	public Transform QueueStart { get { return queueStart; } private set { } }
-
-	/// <summary>
-	/// Sets the direction for the queue.
-	/// </summary>
-	[SerializeField]
-	private Vector3 queueDirect = Vector3.back;
-
 	[SerializeField]
 	private Transform spawn = null;
-	[SerializeField]
-	private Transform queueStart = null;
 
 	[SerializeField]
-	private GameObject customer = null;
+	private GameObject customerPrefab = null;
 
 	/// <summary>
-	/// Removes customers from the queue if they have been served and re-positions the customers.
+	/// Adds a customer to the queue.
 	/// </summary>
-	protected void UpdateQueue() {
-		LinkedListNode<GameObject> queueNode = Queue.First;
-
-		// Removes served customers from the queue.
-		for (int iterator = 0; iterator < Queue.Count; ++iterator) {
-			if (!queueNode.Value.GetComponent<Customer>().OpenOrder) {
-				Queue.Remove(queueNode);
-				// Restart the queue search.
-				queueNode = Queue.First;
-				iterator = -1;
-				continue;
-			}
-
-			if (queueNode != Queue.Last) {
-				queueNode = queueNode.Next;
-			}
+	public bool AddToQueue(Customer customer) {
+		if (Queue.Count > maximumQueuePositions) {
+			return false;
 		}
 
-		queueNode = Queue.First;
+		Queue.AddLast(customer.gameObject);
+		return true;
+	}
 
-		// Re-positions the remaining customers.
-		for (int iterator = 0; iterator < Queue.Count; ++iterator) {
-			queueNode.Value.gameObject.GetComponent<Customer>().SetQueuePosition();
-
-			if (queueNode != Queue.Last) {
-				queueNode = queueNode.Next;
-			}
+	public void RemoveFromQueue(GameObject customer) {
+		if (Queue.Contains(customer)) {
+			Queue.Remove(customer);
 		}
 	}
 
-	private void Awake() {
-		queueDirection = queueStart.position - (queueStart.position - queueDirect);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns> Returns an empty position in the queue or Vector3.zero if there's no room. </returns>
+	public Vector3 UpdateQueuePosition(Customer customer) {
+		Vector3 queuePosition = Vector3.zero;
+
+		// Check customer is at front of queue.
+		if (Queue.Count > 1 && Queue.Find(customer.gameObject).Previous != null) {
+			queuePosition = Queue.Find(customer.gameObject).Previous.Value.GetComponent<Customer>().queuePosition + queueDirection * queueGap;
+		} else {
+			// Get first position in queue.
+			queuePosition = QueueStart.position;
+		}
+
+		return queuePosition;
+	}
+
+	public GameObject FindChair() {
+		GameObject emptyChair = emptyChairs.First.Value;
+		// Remove chair from empty list.
+		emptyChairs.Remove(emptyChair);
+		// Add chair to occupied list.
+		occupiedChairs.AddLast(emptyChair);
+		return occupiedChairs.Last.Value;
+	}
+
+	private void Start() {
+		clock = GameObject.FindGameObjectWithTag("Clock").GetComponent<Clock>();
+		gameStateManager = GameObject.FindGameObjectWithTag("GameStateManager").GetComponent<GameStateManager>();
+		QueueStart = GameObject.FindGameObjectWithTag("QueueStart").transform;
+		GameObject[] chairs = GameObject.FindGameObjectsWithTag("Chair");
+
+		for (int i = 0; i < chairs.Length; ++i) {
+			emptyChairs.AddLast(chairs[i]);
+		}
+
+		queueDirection = (-QueueStart.forward);
+		spawnTime = clock.MaxLength / maxCustomers;
 	}
 
 	private void Update() {
-		if (Input.GetKeyDown(KeyCode.F)) {
-			Queue.AddLast(Instantiate(customer, spawn.position, Quaternion.identity));
+		if (gameStateManager.GameState == GameStateManager.GameStates.WaitingToStart) {
+			// Wait until player presses button to start game.
+			return;
+		}
+
+		// Check a customer hasn't already spawned at this time and their spawn time has elapsed.
+		if (lastSpawnTime != (int)clock.CurrentTime && (int)clock.CurrentTime % spawnTime == 0) {
+			// Spawn customer and add them to the queue.
+			customers.AddLast(Instantiate(customerPrefab, spawn.position, Quaternion.identity));
+			lastSpawnTime = (int)clock.CurrentTime;
 		}
 	}
 }
