@@ -6,8 +6,7 @@ public class GameStateManager : MonoBehaviour, IButton {
 
 	public enum GameStates {
 		WaitingToStart,
-		Gameplay,
-		GameOver
+		Gameplay
 	}
 
 	private Clock clock = null;
@@ -21,18 +20,11 @@ public class GameStateManager : MonoBehaviour, IButton {
 
 	private void Start() {
 		clock = GameObject.FindGameObjectWithTag("Clock").GetComponent<Clock>();
-		Button button;
 	}
 
-	// Update is called once per frame
 	private void Update() {
-		if (GameState == GameStates.GameOver) {
-			// Don't run if game has ended.
-			return;
-		}
-
 		if (clock.CurrentTime >= clock.MaxLength) {
-			GameState = GameStates.GameOver;
+			GameOver();
 			return;
 		}
 	}

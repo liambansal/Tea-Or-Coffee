@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2226560394861230315}
   m_Layer: 0
   m_Name: Queue Start
-  m_TagString: Untagged
+  m_TagString: QueueStart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

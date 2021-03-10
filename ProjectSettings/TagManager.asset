@@ -9,11 +9,6 @@ TagManager:
   - TeaBag
   - Milk
   - Customer
-  - Red
-  - Blue
-  - Red Score
-  - Blue Score
-  - Delivered
   - Tea
   - Coffee
   - CoffeeTin
@@ -31,6 +26,9 @@ TagManager:
   - Clock
   - GameStateManager
   - StartButton
+  - Chair
+  - Delivered
+  - QueueStart
   layers:
   - Default
   - TransparentFX
