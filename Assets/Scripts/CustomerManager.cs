@@ -13,11 +13,17 @@ public class CustomerManager : MonoBehaviour
 
 	public Transform QueueStart { get { return queueStart; } private set { } }
 
+	private int timeToSpawn = 0;
+	private int maxCustomers = 25;
+
 	/// <summary>
 	/// Sets the direction for the queue.
 	/// </summary>
 	[SerializeField]
 	private Vector3 queueDirect = Vector3.back;
+
+	private Clock clock = null;
+	private GameStateManager gameStateManager = null;
 
 	[SerializeField]
 	private Transform spawn = null;
@@ -60,12 +66,21 @@ public class CustomerManager : MonoBehaviour
 		}
 	}
 
-	private void Awake() {
+	private void Start() {
+		clock = GameObject.FindGameObjectWithTag("Clock").GetComponent<Clock>();
+		gameStateManager = GameObject.FindGameObjectWithTag("GameStateManager").GetComponent<GameStateManager>();
 		queueDirection = queueStart.position - (queueStart.position - queueDirect);
+		timeToSpawn = clock.MaxLength / maxCustomers;
 	}
 
 	private void Update() {
-		if (Input.GetKeyDown(KeyCode.F)) {
+		if (gameStateManager.GameState == GameStateManager.GameStates.WaitingToStart) {
+			// Wait until player presses button to start game.
+			return;
+		}
+
+		if (clock.CurrentTime >= timeToSpawn && clock.CurrentTime % timeToSpawn == 0) {
+			// Spawn customer and add them to the queue.
 			Queue.AddLast(Instantiate(customer, spawn.position, Quaternion.identity));
 		}
 	}
