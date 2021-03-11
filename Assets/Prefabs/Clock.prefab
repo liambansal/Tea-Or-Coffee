@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7746353234984747209}
   m_Layer: 0
   m_Name: Clock
-  m_TagString: Untagged
+  m_TagString: Clock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,3 +43,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1388d505473f91547bb19a5d07fa6af6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentTime: 0
