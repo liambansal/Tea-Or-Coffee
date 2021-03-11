@@ -20,6 +20,11 @@ public class Mug : MonoBehaviour {
 		beverage.ingredients = new Beverages.Ingredient[Beverages.ingredientList.Length];
 		Beverages.ingredientList.CopyTo(beverage.ingredients, 0);
 		beverage.image = null;
+		beverage.ingredients[0].count = 0;
+		beverage.ingredients[1].count = 0;
+		beverage.ingredients[2].count = 0;
+		beverage.ingredients[3].count = 0;
+		beverage.ingredients[4].count = 0;
 	}
 
 	private void Update() {
