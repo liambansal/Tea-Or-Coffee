@@ -27,6 +27,7 @@ public class Customer : MonoBehaviour {
 	private State customerState = State.Roaming;
 
 	private CustomerManager manager = null;
+	private Beverages beverageClass = null;
 
 	[SerializeField]
 	private GameObject orderCard = null;
@@ -34,11 +35,12 @@ public class Customer : MonoBehaviour {
 
 	private void Awake() {
 		manager = GameObject.FindGameObjectWithTag("Customer Manager").GetComponent<CustomerManager>();
-		orderNumber = Random.Range(0, possibleOrder.Length);
 	}
 
 	private void Start() {
 		sceneExit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Transform>().position;
+		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
+		orderNumber = Random.Range(0, possibleOrder.Length);
 		Order = possibleOrder[orderNumber];
 	}
 
@@ -68,7 +70,7 @@ public class Customer : MonoBehaviour {
 				if (!spawnedCard) {
 					float forwardDistance = 1.5f;
 					orderCard = Instantiate(orderCard, transform.position + Vector3.right * forwardDistance, Quaternion.identity);
-					orderCard.GetComponent<OrderCard>().SetOrder(Beverages.beverages[Order]);
+					orderCard.GetComponent<OrderCard>().SetOrder(beverageClass.recipes[Order]);
 					spawnedCard = true;
 					OpenOrder = true;
 				}
@@ -79,7 +81,7 @@ public class Customer : MonoBehaviour {
 				if (heldBeverage) {
 					heldBeverage.transform.rotation = Quaternion.identity;
 					heldBeverage.transform.position = transform.position + transform.forward;
-					drinkTime -= Time.fixedDeltaTime;
+					drinkTime -= Time.deltaTime;
 
 					if (drinkTime <= 0.0f) {
 						customerState = State.Leaving;

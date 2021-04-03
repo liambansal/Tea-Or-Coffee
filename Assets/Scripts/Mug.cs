@@ -11,14 +11,18 @@ public class Mug : MonoBehaviour {
 
 	private Beverages.Beverage beverage = new Beverages.Beverage();
 
+	private Beverages beverageClass = null;
+
 	[SerializeField]
 	private GameObject mugLiquid = null;
 
 	private void Start() {
+		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
 		// Create unknown beverage.
 		beverage.name = "Unknown";
-		beverage.ingredients = new Beverages.Ingredient[Beverages.ingredientList.Length];
-		Beverages.ingredientList.CopyTo(beverage.ingredients, 0);
+		beverage.recipeType = Beverages.RecipeTypes.Unknown;
+		beverage.ingredients = new Beverages.Ingredient[beverageClass.ingredients.Length];
+		beverageClass.ingredients.CopyTo(beverage.ingredients, 0);
 		beverage.image = null;
 		beverage.ingredients[0].count = 0;
 		beverage.ingredients[1].count = 0;
@@ -28,7 +32,8 @@ public class Mug : MonoBehaviour {
 	}
 
 	private void Update() {
-		if (brewState == BREW_STATES.BREWED) {
+		if (brewState == BREW_STATES.BREWED ||
+			brewState == BREW_STATES.SPOILED) {
 			gameObject.tag = beverage.name;
 			const float zStart = 0.0f;
 			const float zEnd = 1.1f;
@@ -41,62 +46,68 @@ public class Mug : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider collision) {
-		// TODO: Dont let tea bags be added if coffee if present and vise versa.
 		foreach (Beverages.Ingredient ingredient in beverage.ingredients) {
-			// Checks for a collision with an ingredient gameObject.
+			// Check for a collision with an ingredient.
 			if (collision.gameObject.CompareTag(ingredient.name)) {
 				AddIngredient(ingredient);
-				// Destroy the ingredients parent.
+				// Destroy the ingredient through its parent gameObject.
 				Destroy(collision.gameObject.transform.parent.gameObject);
 				UpdateBrewState();
 			}
 		}
 	}
 
+	/// <summary>
+	/// Tries adding an ingredient to the beverage.
+	/// </summary>
+	/// <param name="ingredient"> Ingredient to add. </param>
 	private void AddIngredient(Beverages.Ingredient ingredient) {
-		ingredient.isAdded = true;
-		++ingredient.count;
+		// Accept the first recipe type to contact.
+		if (beverage.recipeType == Beverages.RecipeTypes.Unknown) {
+			beverage.recipeType = ingredient.ownerRecipe;
+		}
 
+		// Find collided ingredient among the beverage's ingredients.
 		for (int i = 0; i < beverage.ingredients.Length; ++i) {
 			if (beverage.ingredients[i].name == ingredient.name) {
-				// Checks off the collided ingredient from the recipe list.
-				beverage.ingredients[i] = ingredient;
+				beverage.ingredients[i].isAdded = true;
+				++beverage.ingredients[i].count;
 				return;
 			}
 		}
 	}
 
 	private void UpdateBrewState() {
-		// If player has added enough ingredients for multiple beverages to be brewed 
-		// we need to decide which one to use.
 		// Keeps track of possible beverages to be brewed.
 		LinkedList<Beverages.Beverage> brewedBeverages = new LinkedList<Beverages.Beverage>();
 
 		// Loops through all beverages that can be made.
-		for (int i = 0; i < Beverages.beverageKeys.Length; ++i) {
-			// Temporary variable to store possible beverage.
-			Beverages.Beverage possibleBeverage = Beverages.beverages[Beverages.beverageKeys[i]];
-			CheckAddedInrgedients(ref possibleBeverage);
+		for (int i = 0; i < beverageClass.beverageKeys.Length; ++i) {
+			// Stores the beverage recipe the player could be trying to make.
+			Beverages.Beverage possibleBeverage = beverageClass.recipes[beverageClass.beverageKeys[i]];
 
-			if (brewState == BREW_STATES.BREWED) {
+			if (CheckWhatsBrewing(ref possibleBeverage)) {
 				brewedBeverages.AddLast(possibleBeverage);
 			}
 		}
 
 		if (brewedBeverages.Count > 0) {
+			// The beverage with the most ingredients added.
 			int largestBrew = 0;
 			LinkedListNode<Beverages.Beverage> node = brewedBeverages.First;
-			Beverages.Beverage brewedBeverage = new Beverages.Beverage();
+			Beverages.Beverage brewedBeverage = node.Value;
 
-			// Get the beverage with the most ingredients.
+			// If player has added enough ingredients for multiple beverages to be brewed 
+			// we need to decide which one to use.
 			for (int j = 0; j < brewedBeverages.Count; ++j, node = node.Next) {
+				// Find brewed beverage with the most ingredients.
 				if (node.Value.ingredients.Length > largestBrew) {
 					brewedBeverage = node.Value;
 					largestBrew = node.Value.ingredients.Length;
 				}
 			}
 
-			// Identify what the player's making.
+			// Identify what's in the mug.
 			beverage.name = brewedBeverage.name;
 			gameObject.tag = brewedBeverage.name;
 			beverage.image = brewedBeverage.image;
@@ -112,22 +123,50 @@ public class Mug : MonoBehaviour {
 		}
 	}
 
-	private void CheckAddedInrgedients(ref Beverages.Beverage possibleBeverage) {
+	/// <summary>
+	/// Checks if the mug is holding a certain type of beverage.
+	/// </summary>
+	/// <param name="possibleBeverage"> Beverage to compare mug's contents to. </param>
+	/// <returns> True if the argument matches the mug's beverage type. </returns>
+	private bool CheckWhatsBrewing(ref Beverages.Beverage possibleBeverage) {
+		// Only check recipe types matching beverage type.
+		if (possibleBeverage.recipeType != beverage.recipeType) {
+			return false;
+		}
+
 		foreach (Beverages.Ingredient ingredient in beverage.ingredients) {
+			// Is an ingredient apart of the argument recipe.
+			bool inRecipe = false;
+
 			for (int j = 0; j < possibleBeverage.ingredients.Length; ++j) {
 				if (ingredient.name == possibleBeverage.ingredients[j].name) {
-					if (ingredient.isAdded && (ingredient.count == possibleBeverage.ingredients[j].count)) {
-						brewState = BREW_STATES.BREWED;
+					inRecipe = true;
+
+					if (ingredient.isAdded && ingredient.count == possibleBeverage.ingredients[j].count) {
 						break;
-					} else if (ingredient.isAdded && (ingredient.count != 0)) {
-						brewState = BREW_STATES.SPOILED;
-						return;
-					} else if (!ingredient.isAdded && (ingredient.count == 0)) {
+					} else if (ingredient.isAdded && ingredient.count > possibleBeverage.ingredients[j].count) {
+						if (brewState == BREW_STATES.BREWED) {
+							brewState = BREW_STATES.SPOILED;
+						}
+
+						return false;
+					} else if (!ingredient.isAdded && ingredient.count == 0) {
 						brewState = BREW_STATES.EMPTY;
-						return;
+						return false;
 					}
 				}
 			}
+
+			// Check if an ingredient has been added that wasn't found in the recipe.
+			if (!inRecipe && ingredient.count > 0) {
+				if (brewState == BREW_STATES.BREWED) {
+					brewState = BREW_STATES.SPOILED;
+				}
+
+				return false;
+			}
 		}
+
+		return true;
 	}
 }

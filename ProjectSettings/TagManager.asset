@@ -29,6 +29,7 @@ TagManager:
   - Chair
   - Delivered
   - QueueStart
+  - BeverageClass
   layers:
   - Default
   - TransparentFX
