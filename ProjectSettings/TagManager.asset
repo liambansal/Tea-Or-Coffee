@@ -28,8 +28,8 @@ TagManager:
   - StartButton
   - Chair
   - Delivered
-  - QueueStart
   - BeverageClass
+  - CardQueue
   layers:
   - Default
   - TransparentFX
