@@ -10,7 +10,7 @@ public class Customer : MonoBehaviour {
 	public bool IsServed { get; private set; } = false;
 
 	private int orderNumber = 0;
-	private float drinkTime = 8.0f;
+	private float drinkTime = 40.0f;
 	private bool hasOrdered = false;
 	private string[] possibleOrder = {
 		"Tea",
@@ -34,8 +34,6 @@ public class Customer : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject orderCard = null;
-	[SerializeField]
-	private GameObject orderCardQueue = null;
 	private GameObject heldBeverage = null;
 
 	private void Awake() {
@@ -76,7 +74,6 @@ public class Customer : MonoBehaviour {
 			}
 			case State.Served: {
 				if (heldBeverage) {
-					Destroy(orderCard);
 					heldBeverage.transform.rotation = Quaternion.identity;
 					heldBeverage.transform.position = transform.position + transform.forward;
 					drinkTime -= Time.deltaTime;
@@ -112,7 +109,7 @@ public class Customer : MonoBehaviour {
 
 			// Update the remaining customers positions.
 			foreach (KeyValuePair<GameObject, Vector3> element in manager.Queue.Queue) {
-				element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(gameObject));
+				element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(element.Key));
 			}
 
 			Vector3 chairPosition = manager.FindChair().gameObject.transform.position;

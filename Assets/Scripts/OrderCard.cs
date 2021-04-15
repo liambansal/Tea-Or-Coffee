@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class OrderCard : MonoBehaviour {
 	private bool isQueued = false;
+	/// <summary>
+	/// Has the layer touched this gameobject?
+	/// </summary>
+	private bool touchedByPlayer = false;
 
 	[SerializeField]
 	private GameObject ingredientList = null;
@@ -19,6 +24,7 @@ public class OrderCard : MonoBehaviour {
 		beverage = setBeverage;
 		beverageImage.sprite = beverage.image;
 
+		// Spawn images for beverage ingredients.
 		for (int i = 0; i < beverage.ingredients.Length; ++i) {
 			ingredientImage.sprite = beverage.ingredients[i].image;
 			Instantiate(ingredientImage, ingredientList.transform);
@@ -31,7 +37,6 @@ public class OrderCard : MonoBehaviour {
 		if (queue.AddToQueue(gameObject)) {
 			transform.position = queue.GetPosition(gameObject);
 			isQueued = true;
-			GetComponent<Rigidbody>().freezeRotation = true;
 		} else {
 			// Place card out of view from player.
 			transform.position = new Vector3(13.0f, -5.0f, 0.0f);
@@ -40,14 +45,20 @@ public class OrderCard : MonoBehaviour {
 
 	private void Update() {
 		// Check if player has picked up the card.
-		if (gameObject.transform.parent) {
+		if (!touchedByPlayer && gameObject.transform.parent != null) {
+			touchedByPlayer = true;
 			isQueued = false;
-			GetComponent<Rigidbody>().freezeRotation = false;
 			queue.RemoveFromQueue(gameObject);
+
+			// Update queue positions for remaining queue elements.
+			foreach (KeyValuePair<GameObject, Vector3> element in queue.Queue) {
+				element.Key.gameObject.transform.position = queue.GetPosition(element.Key);
+			}
 		}
 
 		if (isQueued) {
 			transform.position = queue.GetPosition(gameObject);
+			GetComponent<Rigidbody>().Sleep();
 		}
 	}
 }

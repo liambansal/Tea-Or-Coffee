@@ -43,7 +43,7 @@ public class CustomerManager : MonoBehaviour {
 			emptyChairs.AddLast(chairs[i]);
 		}
 
-		spawnTime = clock.MaxLength / maxCustomers;
+		spawnTime = 3;//clock.MaxLength / maxCustomers;
 	}
 
 	private void Update() {

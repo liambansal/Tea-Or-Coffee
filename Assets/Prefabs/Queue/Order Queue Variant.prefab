@@ -95,7 +95,7 @@ PrefabInstance:
     - target: {fileID: 5571387161167663027, guid: 5009a48685ae28c45881b705d0699fa3,
         type: 3}
       propertyPath: queueGapDistance
-      value: 0.6
+      value: 0.65
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5009a48685ae28c45881b705d0699fa3, type: 3}

@@ -1,8 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class ObjectQueue : MonoBehaviour {
+	/// <summary>
+	/// Stores a copy of a gameObject with its queue position.
+	/// </summary>
 	public Dictionary<GameObject, Vector3> Queue { get; private set; } = new Dictionary<GameObject, Vector3>();
 
 	[SerializeField]
@@ -13,7 +15,7 @@ public class ObjectQueue : MonoBehaviour {
 	private Vector3 queueDirection = Vector3.zero;
 	private Vector3 lastQueuePosition = Vector3.zero;
 
-	public bool AddToQueue(GameObject objectTransform) {
+	public bool AddToQueue(GameObject queueObject) {
 		if (Queue.Count >= maximumQueuePositions) {
 			return false;
 		}
@@ -24,29 +26,31 @@ public class ObjectQueue : MonoBehaviour {
 			lastQueuePosition = transform.position;
 		}
 
-		Queue.Add(objectTransform, lastQueuePosition);
+		Queue.Add(queueObject, lastQueuePosition);
 		return true;
 	}
 
-	public void RemoveFromQueue(GameObject objectTransform) {
-		if (Queue.ContainsKey(objectTransform)) {
-			Queue.Remove(objectTransform);
+	public void RemoveFromQueue(GameObject queueObject) {
+		if (Queue.ContainsKey(queueObject)) {
+			Queue.Remove(queueObject);
 			RefreshPositions();
 		}
 	}
 
-	public Vector3 GetPosition(GameObject transform) {
+	public Vector3 GetPosition(GameObject queueObject) {
 		Vector3 position;
-		Queue.TryGetValue(transform, out position);
+		Queue.TryGetValue(queueObject, out position);
 		return position;
 	}
 
 	private void RefreshPositions() {
-		lastQueuePosition = transform.position;
+		GameObject[] queueCopy = new GameObject[Queue.Count];
+		Queue.Keys.CopyTo(queueCopy, 0);
+		int cardCount = 0;
 
-		foreach (KeyValuePair<GameObject, Vector3> element in Queue) {
-			lastQueuePosition = lastQueuePosition + queueDirection * queueGapDistance;
-			Queue[element.Key] = lastQueuePosition;
+		foreach (GameObject element in queueCopy) {
+			lastQueuePosition = transform.position + queueDirection * queueGapDistance * cardCount++;
+			Queue[element] = lastQueuePosition;
 		}
 	}
 
