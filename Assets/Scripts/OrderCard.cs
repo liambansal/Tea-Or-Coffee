@@ -34,12 +34,9 @@ public class OrderCard : MonoBehaviour {
 	private void Start() {
 		queue = GameObject.FindGameObjectWithTag("CardQueue").GetComponent<ObjectQueue>();
 
-		if (queue.AddToQueue(gameObject)) {
+		if (queue.AddToQueue(gameObject, true)) {
 			transform.position = queue.GetPosition(gameObject);
 			isQueued = true;
-		} else {
-			// Place card out of view from player.
-			transform.position = new Vector3(13.0f, -5.0f, 0.0f);
 		}
 	}
 
@@ -56,8 +53,10 @@ public class OrderCard : MonoBehaviour {
 			}
 		}
 
-		if (isQueued) {
+		if (queue.Queue.ContainsKey(gameObject)) {
+			isQueued = true;
 			transform.position = queue.GetPosition(gameObject);
+			transform.rotation = Quaternion.identity;
 			GetComponent<Rigidbody>().Sleep();
 		}
 	}

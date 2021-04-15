@@ -48,7 +48,7 @@ public class Customer : MonoBehaviour {
 		Order = possibleOrder[orderNumber];
 
 		// Try setting a queue position.
-		if (!manager.Queue.AddToQueue(gameObject)) {
+		if (!manager.Queue.AddToQueue(gameObject, false)) {
 			customerState = State.Leaving;
 			return;
 		}
@@ -57,19 +57,28 @@ public class Customer : MonoBehaviour {
 		gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(gameObject));
 	}
 
+	/// <summary>
+	/// Updates the customer's behaviour state.
+	/// </summary>
 	private void Update() {
 		switch (customerState) {
 			case State.Roaming: {
-				if (manager.Queue.Queue.ContainsKey(gameObject) &&
-					Mathf.Approximately(transform.position.x, GetComponent<NavMeshAgent>().destination.x) &&
-					Mathf.Approximately(transform.position.z, GetComponent<NavMeshAgent>().destination.z)) {
-					OrderDrink();
-					customerState = State.Waiting;
+				// check if queueing
+				if (manager.Queue.Queue.ContainsKey(gameObject)) {
+					const float touchingDistance = 0.1f;
+
+					if (GetComponent<NavMeshAgent>().remainingDistance <= touchingDistance) {
+						customerState = State.Waiting;
+					}
 				}
 
 				break;
 			}
 			case State.Waiting: {
+				if (!hasOrdered) {
+					OrderDrink();
+				}
+
 				break;
 			}
 			case State.Served: {

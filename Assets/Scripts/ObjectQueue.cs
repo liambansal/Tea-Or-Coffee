@@ -15,8 +15,17 @@ public class ObjectQueue : MonoBehaviour {
 	private Vector3 queueDirection = Vector3.zero;
 	private Vector3 lastQueuePosition = Vector3.zero;
 
-	public bool AddToQueue(GameObject queueObject) {
+	/// <summary>
+	/// Object's that can't be fitted into the queue yet.
+	/// </summary>
+	private LinkedList<GameObject> queueBacklog = new LinkedList<GameObject>();
+
+	public bool AddToQueue(GameObject queueObject, bool fillBacklog) {
 		if (Queue.Count >= maximumQueuePositions) {
+			if (fillBacklog) {
+				AddToBacklog(queueObject);
+			}
+
 			return false;
 		}
 
@@ -34,6 +43,7 @@ public class ObjectQueue : MonoBehaviour {
 		if (Queue.ContainsKey(queueObject)) {
 			Queue.Remove(queueObject);
 			RefreshPositions();
+			TryEmptyingBacklog();
 		}
 	}
 
@@ -41,6 +51,10 @@ public class ObjectQueue : MonoBehaviour {
 		Vector3 position;
 		Queue.TryGetValue(queueObject, out position);
 		return position;
+	}
+
+	private void Start() {
+		queueDirection = transform.forward;
 	}
 
 	private void RefreshPositions() {
@@ -54,7 +68,21 @@ public class ObjectQueue : MonoBehaviour {
 		}
 	}
 
-	private void Start() {
-		queueDirection = transform.forward;
+	private void AddToBacklog(GameObject extraObject) {
+		queueBacklog.AddLast(extraObject);
+	}
+
+	private void TryEmptyingBacklog() {
+		int emptyQueuePositions = maximumQueuePositions - Queue.Count;
+
+		if (queueBacklog.Count > 0 && emptyQueuePositions > 0) {
+			LinkedListNode<GameObject> iterator = queueBacklog.First;
+
+			for (int i = 0; i < emptyQueuePositions; ++i, --emptyQueuePositions, iterator = queueBacklog.First) {
+				if (AddToQueue(queueBacklog.First.Value, true)) {
+					queueBacklog.Remove(iterator);
+				}
+			}
+		}
 	}
 }
