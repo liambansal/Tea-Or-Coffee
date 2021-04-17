@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class OrderCard : MonoBehaviour {
-	private bool isQueued = false;
 	/// <summary>
 	/// Has the layer touched this gameobject?
 	/// </summary>
@@ -36,7 +35,6 @@ public class OrderCard : MonoBehaviour {
 
 		if (queue.AddToQueue(gameObject, true)) {
 			transform.position = queue.GetPosition(gameObject);
-			isQueued = true;
 		}
 	}
 
@@ -44,7 +42,6 @@ public class OrderCard : MonoBehaviour {
 		// Check if player has picked up the card.
 		if (!touchedByPlayer && gameObject.transform.parent != null) {
 			touchedByPlayer = true;
-			isQueued = false;
 			queue.RemoveFromQueue(gameObject);
 
 			// Update queue positions for remaining queue elements.
@@ -54,7 +51,6 @@ public class OrderCard : MonoBehaviour {
 		}
 
 		if (queue.Queue.ContainsKey(gameObject)) {
-			isQueued = true;
 			transform.position = queue.GetPosition(gameObject);
 			transform.rotation = Quaternion.identity;
 			GetComponent<Rigidbody>().Sleep();

@@ -2,6 +2,8 @@
 using UnityEngine;
 
 public class Mug : MonoBehaviour {
+	public Beverages.Beverage Beverage { get { return beverage; } private set { } }
+
 	private enum BREW_STATES {
 		EMPTY,
 		BREWED,
@@ -34,7 +36,6 @@ public class Mug : MonoBehaviour {
 	private void Update() {
 		if (brewState == BREW_STATES.BREWED ||
 			brewState == BREW_STATES.SPOILED) {
-			gameObject.tag = beverage.name;
 			const float zStart = 0.0f;
 			const float zEnd = 1.1f;
 			// Slowly raises the level of liquid within the mug. Z is pointing up.

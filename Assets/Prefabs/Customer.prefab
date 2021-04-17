@@ -150,6 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orderCard: {fileID: 392997647583499784, guid: 38b316d0c60658d489eaeac2367a7ed4,
     type: 3}
+  cash: {fileID: 6192156084388840744, guid: 9d4b36138678b2149978b887d5a9e6f8, type: 3}
 --- !u!1 &8172902953963330261
 GameObject:
   m_ObjectHideFlags: 0

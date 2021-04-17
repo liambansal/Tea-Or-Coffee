@@ -34,6 +34,8 @@ public class Customer : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject orderCard = null;
+	[SerializeField]
+	private GameObject cash = null;
 	private GameObject heldBeverage = null;
 
 	private void Awake() {
@@ -82,6 +84,8 @@ public class Customer : MonoBehaviour {
 				break;
 			}
 			case State.Served: {
+				IsServed = true;
+
 				if (heldBeverage) {
 					heldBeverage.transform.rotation = Quaternion.identity;
 					heldBeverage.transform.position = transform.position + transform.forward;
@@ -109,20 +113,18 @@ public class Customer : MonoBehaviour {
 			heldBeverage = collider.gameObject;
 			// Set the mug's parent to the customer.
 			heldBeverage.transform.SetParent(gameObject.transform, true);
-			IsServed = true;
-			// Change the mug's tag so players can't interact with it after it delivered to a 
-			// customer.
+			// Change the mug's tag so player/other customers can't interact with it any more.
 			heldBeverage.tag = "Delivered";
 			customerState = State.Served;
+			Pay();
 			manager.Queue.RemoveFromQueue(gameObject);
 
-			// Update the remaining customers positions.
+			// Update the remaining customer's queue positions.
 			foreach (KeyValuePair<GameObject, Vector3> element in manager.Queue.Queue) {
 				element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(element.Key));
 			}
 
 			Vector3 chairPosition = manager.FindChair().gameObject.transform.position;
-			// Get chair position.
 			gameObject.GetComponent<NavMeshAgent>().SetDestination(chairPosition);
 		}
 
@@ -135,5 +137,10 @@ public class Customer : MonoBehaviour {
 		orderCard = Instantiate(orderCard, Vector3.zero, Quaternion.identity);
 		orderCard.GetComponent<OrderCard>().SetOrder(beverageClass.recipes[Order]);
 		hasOrdered = true;
+	}
+
+	private void Pay() {
+		Vector3 ordservingMat = GameObject.FindGameObjectWithTag("ServingMat").transform.position;
+		Instantiate(cash, ordservingMat + Vector3.up, Quaternion.identity);
 	}
 }

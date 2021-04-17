@@ -30,6 +30,8 @@ TagManager:
   - Delivered
   - BeverageClass
   - CardQueue
+  - ServingMat
+  - Cash
   layers:
   - Default
   - TransparentFX
