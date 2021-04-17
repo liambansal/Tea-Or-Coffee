@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Beverages : MonoBehaviour {
-	static public string[] beverageKeys { get; private set; } = {
+	public string[] beverageKeys { get; private set; } = {
 		"Tea",
 		"Coffee",
 		"BuildersBrew"
@@ -15,49 +14,60 @@ public class Beverages : MonoBehaviour {
 		public bool isAdded;
 		public int count;
 		public Sprite image;
+		public RecipeTypes ownerRecipe;
 
-		public Ingredient(string newname, bool newIsAdded, int newCount, Sprite newImage) {
+		public Ingredient(string newname, bool newIsAdded, int newCount, Sprite newImage, RecipeTypes newOwnerRecipe) {
 			name = newname;
 			isAdded = newIsAdded;
 			count = newCount;
 			image = newImage;
+			ownerRecipe = newOwnerRecipe;
 		}
 	};
 
 	public struct Beverage {
 		public string name;
+		public RecipeTypes recipeType;
 		public Ingredient[] ingredients;
 		public Sprite image;
 		public Material material;
 
-		public Beverage(string newName, Ingredient[] newIngredients, Sprite newImage, Material newMaterial) {
+		public Beverage(string newName, RecipeTypes newRecipeType, Ingredient[] newIngredients, Sprite newImage, Material newMaterial) {
 			name = newName;
+			recipeType = newRecipeType;
 			ingredients = newIngredients;
 			image = newImage;
 			material = newMaterial;
 		}
 	};
 
-	public static Ingredient[] ingredientList { get; private set; }
+	public enum RecipeTypes {
+		Tea,
+		Coffee,
+		Unknown,
+		Count
+	}
 
-	private static Beverage tea;
-	private static Beverage coffee;
-	private static Beverage buildersBrew ;
-
-	private static Ingredient teaBag = new Ingredient("TeaBag", false, 1, null);
-	private static Ingredient teaBagStrong = new Ingredient("TeaBag", false, 2, null);
-	private static Ingredient coffeeTin = new Ingredient("CoffeeTin", false, 1, null);
-	private static Ingredient sugar = new Ingredient("Sugar", false, 1, null);
-	private static Ingredient water = new Ingredient("Water", false, 1, null);
-	private static Ingredient milk = new Ingredient("Milk", false, 1, null);
+	public Ingredient[] ingredients { get; private set; }
 
 	/// <summary>
 	/// Possible beverages to create.
 	/// </summary>
-	static public Dictionary<string, Beverage> beverages { get; private set; } = null;
+	public Dictionary<string, Beverage> recipes { get; private set; } = null;
+
+	private Beverage tea;
+	private Beverage coffee;
+	private Beverage buildersBrew ;
+
+	private Ingredient teaBag = new Ingredient("TeaBag", false, 1, null, RecipeTypes.Tea);
+	private Ingredient teaBagStrong = new Ingredient("TeaBag", false, 2, null, RecipeTypes.Tea);
+	private Ingredient coffeeTin = new Ingredient("CoffeeTin", false, 1, null, RecipeTypes.Coffee);
+	private Ingredient sugar = new Ingredient("Sugar", false, 1, null, RecipeTypes.Unknown);
+	private Ingredient water = new Ingredient("Water", false, 1, null, RecipeTypes.Unknown);
+	private Ingredient milk = new Ingredient("Milk", false, 1, null, RecipeTypes.Unknown);
 
 	private void Start() {
-		// Gather all the beverage and ingredient sprites and materials.
+		// Initialize unset beverage and ingredient properties.
 		tea.image = GameObject.FindGameObjectWithTag("Tea").GetComponent<Image>().sprite;
 		tea.material = GameObject.FindGameObjectWithTag("Tea").GetComponent<MeshRenderer>().material;
 		coffee.image = GameObject.FindGameObjectWithTag("Coffee").GetComponent<Image>().sprite;
@@ -71,7 +81,7 @@ public class Beverages : MonoBehaviour {
 		water.image = GameObject.FindGameObjectWithTag("Water").GetComponent<Image>().sprite;
 		milk.image = GameObject.FindGameObjectWithTag("Milk").GetComponent<Image>().sprite;
 
-		ingredientList = new Ingredient[] {
+		ingredients = new Ingredient[] {
 			teaBag,
 			coffeeTin,
 			sugar,
@@ -79,7 +89,9 @@ public class Beverages : MonoBehaviour {
 			milk
 		};
 
+		// Create each individual beverage recipe.
 		tea = new Beverage("Tea",
+			RecipeTypes.Tea,
 			new Ingredient[4] {
 				teaBag,
 				sugar,
@@ -89,6 +101,7 @@ public class Beverages : MonoBehaviour {
 			tea.image,
 			tea.material);
 		coffee = new Beverage("Coffee",
+			RecipeTypes.Coffee,
 			new Ingredient[4] {
 				coffeeTin,
 				sugar,
@@ -98,6 +111,7 @@ public class Beverages : MonoBehaviour {
 			coffee.image,
 			coffee.material);
 		buildersBrew = new Beverage("BuildersBrew",
+			RecipeTypes.Tea,
 			new Ingredient[4] {
 				teaBagStrong,
 				sugar,
@@ -107,7 +121,8 @@ public class Beverages : MonoBehaviour {
 			buildersBrew.image,
 			buildersBrew.material);
 
-		beverages = new Dictionary<string, Beverage>() {
+		// Add recipes to a dictionary for accessibility from other classes.
+		recipes = new Dictionary<string, Beverage>() {
 			{ beverageKeys[0], tea },
 			{ beverageKeys[1], coffee },
 			{ beverageKeys[2], buildersBrew },

@@ -3,13 +3,15 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class Customer : MonoBehaviour {
+	/// <summary>
+	/// Type of drink ordered by the customer.
+	/// </summary>
 	public string Order { get; private set; } = "";
-	public bool OpenOrder { get; private set; } = false;
-	public Vector3 queuePosition { get; private set; } = Vector3.zero;
+	public bool IsServed { get; private set; } = false;
 
 	private int orderNumber = 0;
-	private float drinkTime = 8;
-	private bool spawnedCard = false;
+	private float drinkTime = 40.0f;
+	private bool hasOrdered = false;
 	private string[] possibleOrder = {
 		"Tea",
 		"Coffee",
@@ -20,13 +22,15 @@ public class Customer : MonoBehaviour {
 
 	private enum State {
 		Roaming,
-		Ordering,
+		Waiting,
 		Served,
-		Leaving
+		Leaving,
+		Count
 	}
 	private State customerState = State.Roaming;
 
 	private CustomerManager manager = null;
+	private Beverages beverageClass = null;
 
 	[SerializeField]
 	private GameObject orderCard = null;
@@ -34,43 +38,45 @@ public class Customer : MonoBehaviour {
 
 	private void Awake() {
 		manager = GameObject.FindGameObjectWithTag("Customer Manager").GetComponent<CustomerManager>();
-		orderNumber = Random.Range(0, possibleOrder.Length);
 	}
 
 	private void Start() {
 		sceneExit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Transform>().position;
+		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
+		// Select a semi random drink order for customer.
+		orderNumber = Random.Range(0, possibleOrder.Length);
 		Order = possibleOrder[orderNumber];
+
+		// Try setting a queue position.
+		if (!manager.Queue.AddToQueue(gameObject, false)) {
+			customerState = State.Leaving;
+			return;
+		}
+
+		// Set queue position as target destination.
+		gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(gameObject));
 	}
 
+	/// <summary>
+	/// Updates the customer's behaviour state.
+	/// </summary>
 	private void Update() {
 		switch (customerState) {
 			case State.Roaming: {
-				if (queuePosition == Vector3.zero) {
-					if (!manager.AddToQueue(this)) {
-						// Don't enter cafe since queue is full.
-						customerState = State.Leaving;
+				// check if queueing
+				if (manager.Queue.Queue.ContainsKey(gameObject)) {
+					const float touchingDistance = 0.1f;
+
+					if (GetComponent<NavMeshAgent>().remainingDistance <= touchingDistance) {
+						customerState = State.Waiting;
 					}
-
-					queuePosition = manager.UpdateQueuePosition(this);
-					gameObject.GetComponent<NavMeshAgent>().SetDestination(queuePosition);
-				}
-
-				// Check customer is first in queue and at target destination.
-				if (queuePosition == manager.QueueStart.position &&
-					Mathf.Approximately(transform.position.x, GetComponent<NavMeshAgent>().destination.x) &&
-					Mathf.Approximately(transform.position.z, GetComponent<NavMeshAgent>().destination.z)) {
-					customerState = State.Ordering;
 				}
 
 				break;
 			}
-			case State.Ordering: {
-				if (!spawnedCard) {
-					float forwardDistance = 1.5f;
-					orderCard = Instantiate(orderCard, transform.position + Vector3.right * forwardDistance, Quaternion.identity);
-					orderCard.GetComponent<OrderCard>().SetOrder(Beverages.beverages[Order]);
-					spawnedCard = true;
-					OpenOrder = true;
+			case State.Waiting: {
+				if (!hasOrdered) {
+					OrderDrink();
 				}
 
 				break;
@@ -79,7 +85,7 @@ public class Customer : MonoBehaviour {
 				if (heldBeverage) {
 					heldBeverage.transform.rotation = Quaternion.identity;
 					heldBeverage.transform.position = transform.position + transform.forward;
-					drinkTime -= Time.fixedDeltaTime;
+					drinkTime -= Time.deltaTime;
 
 					if (drinkTime <= 0.0f) {
 						customerState = State.Leaving;
@@ -99,37 +105,35 @@ public class Customer : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider collider) {
-		if (OpenOrder &&
-			(collider.gameObject.CompareTag("Tea") ||
-			collider.gameObject.CompareTag("Coffee") ||
-			collider.gameObject.CompareTag("BuildersBrew"))) {
+		if (hasOrdered && !IsServed && collider.gameObject.CompareTag(Order)) {
 			heldBeverage = collider.gameObject;
 			// Set the mug's parent to the customer.
 			heldBeverage.transform.SetParent(gameObject.transform, true);
-			OpenOrder = false;
+			IsServed = true;
 			// Change the mug's tag so players can't interact with it after it delivered to a 
 			// customer.
 			heldBeverage.tag = "Delivered";
 			customerState = State.Served;
+			manager.Queue.RemoveFromQueue(gameObject);
+
+			// Update the remaining customers positions.
+			foreach (KeyValuePair<GameObject, Vector3> element in manager.Queue.Queue) {
+				element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(element.Key));
+			}
+
 			Vector3 chairPosition = manager.FindChair().gameObject.transform.position;
 			// Get chair position.
 			gameObject.GetComponent<NavMeshAgent>().SetDestination(chairPosition);
-			manager.RemoveFromQueue(gameObject);
-			LinkedListNode<GameObject> iterator = manager.Queue.First;
-
-			for (int i = 0; i < manager.Queue.Count; ++i, iterator = iterator.Next) {
-				/// Update the remaining customers positions.
-				iterator.Value.GetComponent<Customer>().queuePosition = manager.UpdateQueuePosition(iterator.Value.GetComponent<Customer>());
-				iterator.Value.GetComponent<NavMeshAgent>().SetDestination(iterator.Value.GetComponent<Customer>().queuePosition);
-			}
 		}
 
 		if (collider.gameObject.CompareTag("Exit")) {
-			if (spawnedCard) {
-				Destroy(orderCard);
-			}
-
 			Destroy(gameObject);
 		}
+	}
+
+	private void OrderDrink() {
+		orderCard = Instantiate(orderCard, Vector3.zero, Quaternion.identity);
+		orderCard.GetComponent<OrderCard>().SetOrder(beverageClass.recipes[Order]);
+		hasOrdered = true;
 	}
 }

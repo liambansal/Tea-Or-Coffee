@@ -131,6 +131,7 @@ MonoBehaviour:
   beverageImage: {fileID: 2250251486639956419}
   ingredientImage: {fileID: 8722963161278068317, guid: 564eac2a19965454eb6b2ac656721ba0,
     type: 3}
+  queue: {fileID: 2431279549682011900, guid: 85f3432626c1c6e47b99ea8f5f58df97, type: 3}
 --- !u!114 &1369989306699719498
 MonoBehaviour:
   m_ObjectHideFlags: 0
