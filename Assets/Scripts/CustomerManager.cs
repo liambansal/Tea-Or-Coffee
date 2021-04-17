@@ -7,7 +7,7 @@ public class CustomerManager : MonoBehaviour {
 
 	private int spawnTime = 0;
 	private int lastSpawnTime = 0;
-	private const int maxCustomers = 20;
+	private const int maxCustomers = 40;
 
 	private LinkedList<GameObject> customers = new LinkedList<GameObject>();
 	private LinkedList<GameObject> emptyChairs = new LinkedList<GameObject>();
@@ -41,7 +41,7 @@ public class CustomerManager : MonoBehaviour {
 			emptyChairs.AddLast(chairs[i]);
 		}
 
-		spawnTime = 3;//clock.MaxLength / maxCustomers;
+		spawnTime = clock.MaxLength / maxCustomers;
 	}
 
 	private void Update() {
@@ -51,7 +51,7 @@ public class CustomerManager : MonoBehaviour {
 		}
 
 		// Check a customer hasn't already spawned at this time and their spawn time has elapsed.
-		if (lastSpawnTime != (int)clock.CurrentTime && (int)clock.CurrentTime % spawnTime == 0) {
+		if (spawnTime != 0 && lastSpawnTime != (int)clock.CurrentTime && (int)clock.CurrentTime % spawnTime == 0) {
 			// Spawn customer and add them to the queue.
 			customers.AddLast(Instantiate(customerPrefab, spawn.position, Quaternion.identity));
 			lastSpawnTime = (int)clock.CurrentTime;

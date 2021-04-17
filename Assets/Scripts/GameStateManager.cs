@@ -33,6 +33,8 @@ public class GameStateManager : MonoBehaviour, IButton {
 	/// Reloads the active scene.
 	/// </summary>
 	private void GameOver() {
-		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		// Delete VR player.
+		Destroy(GameObject.FindGameObjectWithTag("Player").transform.parent.gameObject);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
 	}
 }

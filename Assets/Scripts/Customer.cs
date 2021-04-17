@@ -16,7 +16,10 @@ public class Customer : MonoBehaviour {
 
 	private static int customersServed = 0;
 	private int orderNumber = 0;
-	private float drinkTime = 40.0f;
+	private const float maximumPatienceLeft = 40.0f;
+	private float drinkTime = 60.0f;
+	private float patienceLeft = 40.0f;
+
 	private bool hasOrdered = false;
 
 	private Vector3 sceneExit = Vector3.zero;
@@ -33,6 +36,7 @@ public class Customer : MonoBehaviour {
 	private CustomerManager manager = null;
 	private Beverages beverageClass = null;
 	private Player player = null;
+	private Coaster coaster = null;
 
 	[SerializeField]
 	private GameObject orderCard = null;
@@ -48,6 +52,7 @@ public class Customer : MonoBehaviour {
 		sceneExit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Transform>().position;
 		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
 		player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+		coaster = GameObject.FindGameObjectWithTag("ServingMat").GetComponent<Coaster>();
 		// Select a semi random drink order for customer.
 		orderNumber = Random.Range(0, beverageClass.beverageKeys.Length);
 		Order = beverageClass.beverageKeys[orderNumber];
@@ -87,6 +92,16 @@ public class Customer : MonoBehaviour {
 					OrderDrink();
 				}
 
+				patienceLeft -= Time.deltaTime;
+
+				if (patienceLeft <= 0.0f) {
+					customerState = State.Leaving;
+				}
+
+				if (hasOrdered && !IsServed && coaster.Beverage && coaster.Beverage.CompareTag(Order)) {
+					TakeDrink(coaster.Beverage);
+				}
+
 				break;
 			}
 			case State.Served: {
@@ -115,33 +130,34 @@ public class Customer : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider collider) {
-		if (collider.transform.IsChildOf(player.gameObject.transform)) {
-			// Don't take mugs held by player.
-			return;
-		}
-
-		if (hasOrdered && !IsServed && collider.gameObject.CompareTag(Order)) {
-			heldBeverage = collider.gameObject;
-			// Set the mug's parent to the customer.
-			heldBeverage.transform.SetParent(gameObject.transform, true);
-			// Change the mug's tag so player/other customers can't interact with it any more.
-			heldBeverage.tag = "Delivered";
-			customerState = State.Served;
-			Pay();
-			manager.Queue.RemoveFromQueue(gameObject);
-
-			// Update the remaining customer's queue positions.
-			foreach (KeyValuePair<GameObject, Vector3> element in manager.Queue.Queue) {
-				element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(element.Key));
-			}
-
-			Vector3 chairPosition = manager.FindChair().gameObject.transform.position;
-			GetComponent<NavMeshAgent>().SetDestination(chairPosition);
+		if (hasOrdered && !IsServed && collider.gameObject.CompareTag(Order) && !collider.transform.IsChildOf(player.gameObject.transform)) {
+			TakeDrink(collider.gameObject);
 		}
 
 		if (collider.gameObject.CompareTag("Exit")) {
 			Destroy(gameObject);
 		}
+	}
+
+	private void TakeDrink(GameObject mug) {
+		heldBeverage = mug;
+		// Set the mug's parent to the customer.
+		heldBeverage.transform.SetParent(gameObject.transform, true);
+		// Change the mug's tag so player/other customers can't interact with it any more.
+		heldBeverage.tag = "Delivered";
+		customerState = State.Served;
+		Pay();
+		manager.Queue.RemoveFromQueue(gameObject);
+		int customerCounter = 0;
+
+		// Update the remaining customer's queue positions.
+		foreach (KeyValuePair<GameObject, Vector3> element in manager.Queue.Queue) {
+			element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(element.Key));
+			element.Key.gameObject.GetComponent<Customer>().patienceLeft = maximumPatienceLeft + ++customerCounter;
+		}
+
+		Vector3 chairPosition = manager.FindChair().gameObject.transform.position;
+		GetComponent<NavMeshAgent>().SetDestination(chairPosition);
 	}
 
 	private void OrderDrink() {
