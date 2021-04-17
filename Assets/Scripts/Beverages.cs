@@ -69,13 +69,24 @@ public class Beverages : MonoBehaviour {
 	private Ingredient water = new Ingredient("Water", false, 1, null, RecipeTypes.Unknown);
 	private Ingredient milk = new Ingredient("Milk", false, 1, null, RecipeTypes.Unknown);
 
+	[SerializeField]
+	private Sprite teaBagSprite = null;
+	[SerializeField]
+	private Sprite coffeTinSprite = null;
+	[SerializeField]
+	private Sprite sugarSprite = null;
+	[SerializeField]
+	private Sprite waterSprite = null;
+	[SerializeField]
+	private Sprite milkSprite = null;
+
 	private void Start() {
 		// Initialize unset ingredient properties.
-		teaBag.image = GameObject.FindGameObjectWithTag("TeaBag").GetComponent<Image>().sprite;
-		coffeeTin.image = GameObject.FindGameObjectWithTag("CoffeeTin").GetComponent<Image>().sprite;
-		sugar.image = GameObject.FindGameObjectWithTag("Sugar").GetComponent<Image>().sprite;
-		water.image = GameObject.FindGameObjectWithTag("Water").GetComponent<Image>().sprite;
-		milk.image = GameObject.FindGameObjectWithTag("Milk").GetComponent<Image>().sprite;
+		teaBag.image = teaBagSprite;
+		coffeeTin.image = coffeTinSprite;
+		sugar.image = sugarSprite;
+		water.image = waterSprite;
+		milk.image = milkSprite;
 
 		ingredients = new Ingredient[] {
 			teaBag,

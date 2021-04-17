@@ -26,9 +26,7 @@ public class CustomerManager : MonoBehaviour {
 
 	public GameObject FindChair() {
 		GameObject emptyChair = emptyChairs.First.Value;
-		// Remove chair from empty list.
 		emptyChairs.Remove(emptyChair);
-		// Add chair to occupied list.
 		occupiedChairs.AddLast(emptyChair);
 		return occupiedChairs.Last.Value;
 	}

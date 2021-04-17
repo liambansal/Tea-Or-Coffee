@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR.InteractionSystem;
 
 public class Mug : MonoBehaviour {
 	public Beverages.Beverage Beverage { get { return beverage; } private set { } }
@@ -14,12 +15,14 @@ public class Mug : MonoBehaviour {
 	private Beverages.Beverage beverage = new Beverages.Beverage();
 
 	private Beverages beverageClass = null;
+	private Player player = null;
 
 	[SerializeField]
 	private GameObject mugLiquid = null;
 
 	private void Start() {
 		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
+		player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 		// Create unknown beverage.
 		beverage.name = "Unknown";
 		beverage.recipeType = Beverages.RecipeTypes.Unknown;
@@ -47,6 +50,11 @@ public class Mug : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider collision) {
+		if (collision.transform.IsChildOf(player.gameObject.transform)) {
+			// Don't add ingredients held by player.
+			return;
+		}
+
 		foreach (Beverages.Ingredient ingredient in beverage.ingredients) {
 			// Check for a collision with an ingredient.
 			if (collision.gameObject.CompareTag(ingredient.name)) {

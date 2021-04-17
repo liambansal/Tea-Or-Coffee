@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
+using Valve.VR.InteractionSystem;
 
 public class Customer : MonoBehaviour {
 	/// <summary>
@@ -12,6 +14,7 @@ public class Customer : MonoBehaviour {
 	/// </summary>
 	public bool IsServed { get; private set; } = false;
 
+	private static int customersServed = 0;
 	private int orderNumber = 0;
 	private float drinkTime = 40.0f;
 	private bool hasOrdered = false;
@@ -29,6 +32,7 @@ public class Customer : MonoBehaviour {
 
 	private CustomerManager manager = null;
 	private Beverages beverageClass = null;
+	private Player player = null;
 
 	[SerializeField]
 	private GameObject orderCard = null;
@@ -43,6 +47,7 @@ public class Customer : MonoBehaviour {
 	private void Start() {
 		sceneExit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Transform>().position;
 		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
+		player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 		// Select a semi random drink order for customer.
 		orderNumber = Random.Range(0, beverageClass.beverageKeys.Length);
 		Order = beverageClass.beverageKeys[orderNumber];
@@ -110,6 +115,11 @@ public class Customer : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider collider) {
+		if (collider.transform.IsChildOf(player.gameObject.transform)) {
+			// Don't take mugs held by player.
+			return;
+		}
+
 		if (hasOrdered && !IsServed && collider.gameObject.CompareTag(Order)) {
 			heldBeverage = collider.gameObject;
 			// Set the mug's parent to the customer.
@@ -143,5 +153,7 @@ public class Customer : MonoBehaviour {
 	private void Pay() {
 		Vector3 ordservingMat = GameObject.FindGameObjectWithTag("ServingMat").transform.position;
 		Instantiate(cash, ordservingMat + Vector3.up, Quaternion.identity);
+		Text scoreText = GameObject.FindGameObjectWithTag("CustomersServedScore").GetComponent<Text>();
+		scoreText.text = (++customersServed).ToString();
 	}
 }
