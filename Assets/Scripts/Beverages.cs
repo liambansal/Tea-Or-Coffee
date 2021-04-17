@@ -6,7 +6,9 @@ public class Beverages : MonoBehaviour {
 	public string[] beverageKeys { get; private set; } = {
 		"Tea",
 		"Coffee",
-		"BuildersBrew"
+		"BuildersBrew",
+		"Latte",
+		"Espresso"
 	};
 
 	public struct Ingredient {
@@ -57,25 +59,19 @@ public class Beverages : MonoBehaviour {
 
 	private Beverage tea;
 	private Beverage coffee;
-	private Beverage buildersBrew ;
+	private Beverage buildersBrew;
+	private Beverage latte;
+	private Beverage espresso;
 
 	private Ingredient teaBag = new Ingredient("TeaBag", false, 1, null, RecipeTypes.Tea);
-	private Ingredient teaBagStrong = new Ingredient("TeaBag", false, 2, null, RecipeTypes.Tea);
 	private Ingredient coffeeTin = new Ingredient("CoffeeTin", false, 1, null, RecipeTypes.Coffee);
 	private Ingredient sugar = new Ingredient("Sugar", false, 1, null, RecipeTypes.Unknown);
 	private Ingredient water = new Ingredient("Water", false, 1, null, RecipeTypes.Unknown);
 	private Ingredient milk = new Ingredient("Milk", false, 1, null, RecipeTypes.Unknown);
 
 	private void Start() {
-		// Initialize unset beverage and ingredient properties.
-		tea.image = GameObject.FindGameObjectWithTag("Tea").GetComponent<Image>().sprite;
-		tea.material = GameObject.FindGameObjectWithTag("Tea").GetComponent<MeshRenderer>().material;
-		coffee.image = GameObject.FindGameObjectWithTag("Coffee").GetComponent<Image>().sprite;
-		coffee.material = GameObject.FindGameObjectWithTag("Coffee").GetComponent<MeshRenderer>().material;
-		buildersBrew.image = GameObject.FindGameObjectWithTag("BuildersBrew").GetComponent<Image>().sprite;
-		buildersBrew.material = GameObject.FindGameObjectWithTag("BuildersBrew").GetComponent<MeshRenderer>().material;
+		// Initialize unset ingredient properties.
 		teaBag.image = GameObject.FindGameObjectWithTag("TeaBag").GetComponent<Image>().sprite;
-		teaBagStrong.image = GameObject.FindGameObjectWithTag("TeaBag").GetComponent<Image>().sprite;
 		coffeeTin.image = GameObject.FindGameObjectWithTag("CoffeeTin").GetComponent<Image>().sprite;
 		sugar.image = GameObject.FindGameObjectWithTag("Sugar").GetComponent<Image>().sprite;
 		water.image = GameObject.FindGameObjectWithTag("Water").GetComponent<Image>().sprite;
@@ -102,30 +98,60 @@ public class Beverages : MonoBehaviour {
 			tea.material);
 		coffee = new Beverage("Coffee",
 			RecipeTypes.Coffee,
+			new Ingredient[3] {
+				coffeeTin,
+				sugar,
+				water
+			},
+			coffee.image,
+			coffee.material);
+		buildersBrew = new Beverage("BuildersBrew",
+			RecipeTypes.Tea,
+			new Ingredient[3] {
+				teaBag,
+				sugar,
+				water
+			},
+			buildersBrew.image,
+			buildersBrew.material);
+		latte = new Beverage("Latte",
+			RecipeTypes.Coffee,
 			new Ingredient[4] {
 				coffeeTin,
 				sugar,
 				water,
 				milk
 			},
-			coffee.image,
-			coffee.material);
-		buildersBrew = new Beverage("BuildersBrew",
-			RecipeTypes.Tea,
-			new Ingredient[4] {
-				teaBagStrong,
-				sugar,
+			latte.image,
+			latte.material);
+		espresso = new Beverage("Espresso",
+			RecipeTypes.Coffee,
+			new Ingredient[2] {
+				coffeeTin,
 				water,
-				milk
 			},
-			buildersBrew.image,
-			buildersBrew.material);
+			espresso.image,
+			espresso.material);
+
+		// Initialize unset beverage properties.
+		tea.image = GameObject.FindGameObjectWithTag("Tea").GetComponent<Image>().sprite;
+		tea.material = GameObject.FindGameObjectWithTag("Tea").GetComponent<MeshRenderer>().material;
+		coffee.image = GameObject.FindGameObjectWithTag("Coffee").GetComponent<Image>().sprite;
+		coffee.material = GameObject.FindGameObjectWithTag("Coffee").GetComponent<MeshRenderer>().material;
+		buildersBrew.image = GameObject.FindGameObjectWithTag("BuildersBrew").GetComponent<Image>().sprite;
+		buildersBrew.material = GameObject.FindGameObjectWithTag("BuildersBrew").GetComponent<MeshRenderer>().material;
+		latte.image = GameObject.FindGameObjectWithTag("Latte").GetComponent<Image>().sprite;
+		latte.material = GameObject.FindGameObjectWithTag("Latte").GetComponent<MeshRenderer>().material;
+		espresso.image = GameObject.FindGameObjectWithTag("Espresso").GetComponent<Image>().sprite;
+		espresso.material = GameObject.FindGameObjectWithTag("Espresso").GetComponent<MeshRenderer>().material;
 
 		// Add recipes to a dictionary for accessibility from other classes.
 		recipes = new Dictionary<string, Beverage>() {
 			{ beverageKeys[0], tea },
 			{ beverageKeys[1], coffee },
 			{ beverageKeys[2], buildersBrew },
+			{ beverageKeys[3], latte },
+			{ beverageKeys[4], espresso }
 		};
 	}
 }

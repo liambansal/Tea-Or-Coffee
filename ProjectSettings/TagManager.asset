@@ -32,6 +32,8 @@ TagManager:
   - CardQueue
   - ServingMat
   - Cash
+  - Latte
+  - Espresso
   layers:
   - Default
   - TransparentFX

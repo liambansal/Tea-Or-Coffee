@@ -7,16 +7,14 @@ public class Customer : MonoBehaviour {
 	/// Type of drink ordered by the customer.
 	/// </summary>
 	public string Order { get; private set; } = "";
+	/// <summary>
+	/// Has the customer been served?
+	/// </summary>
 	public bool IsServed { get; private set; } = false;
 
 	private int orderNumber = 0;
 	private float drinkTime = 40.0f;
 	private bool hasOrdered = false;
-	private string[] possibleOrder = {
-		"Tea",
-		"Coffee",
-		"BuildersBrew"
-	};
 
 	private Vector3 sceneExit = Vector3.zero;
 
@@ -46,8 +44,8 @@ public class Customer : MonoBehaviour {
 		sceneExit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Transform>().position;
 		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
 		// Select a semi random drink order for customer.
-		orderNumber = Random.Range(0, possibleOrder.Length);
-		Order = possibleOrder[orderNumber];
+		orderNumber = Random.Range(0, beverageClass.beverageKeys.Length);
+		Order = beverageClass.beverageKeys[orderNumber];
 
 		// Try setting a queue position.
 		if (!manager.Queue.AddToQueue(gameObject, false)) {
@@ -56,13 +54,16 @@ public class Customer : MonoBehaviour {
 		}
 
 		// Set queue position as target destination.
-		gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(gameObject));
+		GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(gameObject));
 	}
 
 	/// <summary>
 	/// Updates the customer's behaviour state.
 	/// </summary>
 	private void Update() {
+		// Reset the orientation.
+		transform.rotation = Quaternion.LookRotation(-Vector3.up, Vector3.forward);
+
 		switch (customerState) {
 			case State.Roaming: {
 				// check if queueing
@@ -99,7 +100,7 @@ public class Customer : MonoBehaviour {
 				break;
 			}
 			case State.Leaving: {
-				gameObject.GetComponent<NavMeshAgent>().SetDestination(sceneExit);
+				GetComponent<NavMeshAgent>().SetDestination(sceneExit);
 				break;
 			}
 			default: {
@@ -125,7 +126,7 @@ public class Customer : MonoBehaviour {
 			}
 
 			Vector3 chairPosition = manager.FindChair().gameObject.transform.position;
-			gameObject.GetComponent<NavMeshAgent>().SetDestination(chairPosition);
+			GetComponent<NavMeshAgent>().SetDestination(chairPosition);
 		}
 
 		if (collider.gameObject.CompareTag("Exit")) {
