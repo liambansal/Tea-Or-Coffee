@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// For creating a world space queue of gameObjects.
+/// </summary>
 public class ObjectQueue : MonoBehaviour {
 	/// <summary>
 	/// Stores a copy of a gameObject with its queue position.
@@ -20,6 +23,12 @@ public class ObjectQueue : MonoBehaviour {
 	/// </summary>
 	private LinkedList<GameObject> queueBacklog = new LinkedList<GameObject>();
 
+	/// <summary>
+	/// Adds a gameObject to the queue.
+	/// </summary>
+	/// <param name="queueObject"> GameObject to add to queue. </param>
+	/// <param name="fillBacklog"> Should the backlog be filled with the gameObject if the queue is full? </param>
+	/// <returns></returns>
 	public bool AddToQueue(GameObject queueObject, bool fillBacklog) {
 		if (Queue.Count >= maximumQueuePositions) {
 			if (fillBacklog) {
@@ -47,16 +56,17 @@ public class ObjectQueue : MonoBehaviour {
 		}
 	}
 
-	public Vector3 GetPosition(GameObject queueObject) {
-		Vector3 position;
-		Queue.TryGetValue(queueObject, out position);
-		return position;
-	}
-
+	/// <summary>
+	/// Sets the queue direction.
+	/// </summary>
 	private void Start() {
 		queueDirection = transform.forward;
 	}
 
+	/// <summary>
+	/// Refreshes the queue position for each element.
+	/// Must update the gameObject's actual position separately.
+	/// </summary>
 	private void RefreshPositions() {
 		GameObject[] queueCopy = new GameObject[Queue.Count];
 		Queue.Keys.CopyTo(queueCopy, 0);
@@ -78,6 +88,7 @@ public class ObjectQueue : MonoBehaviour {
 		if (queueBacklog.Count > 0 && emptyQueuePositions > 0) {
 			LinkedListNode<GameObject> iterator = queueBacklog.First;
 
+			// Try emptying as many backlogged objects as possible.
 			for (int i = 0; i < emptyQueuePositions; ++i, --emptyQueuePositions, iterator = queueBacklog.First) {
 				if (AddToQueue(queueBacklog.First.Value, true)) {
 					queueBacklog.Remove(iterator);

@@ -5,13 +5,16 @@ public class Score : MonoBehaviour {
 	private int score = 0;
 
 	[SerializeField]
-	private Text scoreObject = null;
-
-	private void Awake() {
-		scoreObject.text = score.ToString();
-	}
+	private Text scoreText = null;
 
 	public void IncrementScore() {
-		scoreObject.text = (score += 1).ToString();
+		scoreText.text = (score += 1).ToString();
+	}
+
+	/// <summary>
+	/// Initialises score.
+	/// </summary>
+	private void Awake() {
+		scoreText.text = score.ToString();
 	}
 }

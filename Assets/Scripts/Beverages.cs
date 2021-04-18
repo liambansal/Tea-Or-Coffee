@@ -2,7 +2,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class for creating/referencing beverages and their ingredients.
+/// </summary>
 public class Beverages : MonoBehaviour {
+	/// <summary>
+	/// Names of the beverages that can be made.
+	/// </summary>
 	public string[] beverageKeys { get; private set; } = {
 		"Tea",
 		"Coffee",
@@ -43,17 +49,23 @@ public class Beverages : MonoBehaviour {
 		}
 	};
 
+	/// <summary>
+	/// The category that a beverage or ingredient belongs to.
+	/// </summary>
 	public enum RecipeTypes {
 		Tea,
 		Coffee,
 		Unknown,
 		Count
-	}
+	};
 
+	/// <summary>
+	/// An array of all existing ingredients.
+	/// </summary>
 	public Ingredient[] ingredients { get; private set; }
 
 	/// <summary>
-	/// Possible beverages to create.
+	/// Stores all of the beverages that can be made.
 	/// </summary>
 	public Dictionary<string, Beverage> recipes { get; private set; } = null;
 
@@ -80,6 +92,9 @@ public class Beverages : MonoBehaviour {
 	[SerializeField]
 	private Sprite milkSprite = null;
 
+	/// <summary>
+	/// Initializes everything.
+	/// </summary>
 	private void Start() {
 		// Initialize unset ingredient properties.
 		teaBag.image = teaBagSprite;

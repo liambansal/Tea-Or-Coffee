@@ -4,6 +4,9 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using Valve.VR.InteractionSystem;
 
+/// <summary>
+/// Default behaviour for AI customers.
+/// </summary>
 public class Customer : MonoBehaviour {
 	/// <summary>
 	/// Type of drink ordered by the customer.
@@ -13,15 +16,30 @@ public class Customer : MonoBehaviour {
 	/// Has the customer been served?
 	/// </summary>
 	public bool IsServed { get; private set; } = false;
+	public Vector3 QueuePosition {
+		get {
+			Vector3 queuePosition = Vector3.zero;
+			manager.Queue.Queue.TryGetValue(gameObject, out queuePosition);
+			return queuePosition;
+		}
+		private set {
+		}
+	}
 
 	private static int customersServed = 0;
 	private int orderNumber = 0;
 	private const float maximumPatienceLeft = 15.0f;
 	private float drinkTime = 60.0f;
+	/// <summary>
+	/// How long will the customer wait to be served?
+	/// </summary>
 	private float patienceLeft = 15.0f;
 
 	private bool hasOrdered = false;
 
+	/// <summary>
+	/// Position to leave the scene at.
+	/// </summary>
 	private Vector3 sceneExit = Vector3.zero;
 
 	private enum State {
@@ -30,7 +48,7 @@ public class Customer : MonoBehaviour {
 		Served,
 		Leaving,
 		Count
-	}
+	};
 	private State customerState = State.Roaming;
 
 	private CustomerManager manager = null;
@@ -44,15 +62,21 @@ public class Customer : MonoBehaviour {
 	private GameObject cash = null;
 	private GameObject heldBeverage = null;
 
+	/// <summary>
+	/// Find components within the scene.
+	/// </summary>
 	private void Awake() {
 		manager = GameObject.FindGameObjectWithTag("Customer Manager").GetComponent<CustomerManager>();
-	}
-
-	private void Start() {
 		sceneExit = GameObject.FindGameObjectWithTag("Exit").GetComponent<Transform>().position;
 		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
 		player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 		coaster = GameObject.FindGameObjectWithTag("ServingMat").GetComponent<Coaster>();
+	}
+
+	/// <summary>
+	/// Generate an order and try queueing.
+	/// </summary>
+	private void Start() {
 		// Select a semi random drink order for customer.
 		orderNumber = Random.Range(0, beverageClass.beverageKeys.Length);
 		Order = beverageClass.beverageKeys[orderNumber];
@@ -64,14 +88,14 @@ public class Customer : MonoBehaviour {
 		}
 
 		// Set queue position as target destination.
-		GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(gameObject));
+		GetComponent<NavMeshAgent>().SetDestination(QueuePosition);
 	}
 
 	/// <summary>
-	/// Updates the customer's behaviour state.
+	/// Updates the customer's behaviour state once per frame.
 	/// </summary>
 	private void Update() {
-		// Reset the orientation.
+		// Reset the model orientation.
 		transform.rotation = Quaternion.LookRotation(-Vector3.up, Vector3.forward);
 
 		switch (customerState) {
@@ -135,6 +159,10 @@ public class Customer : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Executes on entering a trigger zone.
+	/// </summary>
+	/// <param name="collider"> Trigger zone. </param>
 	private void OnTriggerEnter(Collider collider) {
 		if (hasOrdered && !IsServed && collider.gameObject.CompareTag(Order) && !collider.transform.IsChildOf(player.gameObject.transform)) {
 			TakeDrink(collider.gameObject);
@@ -147,7 +175,6 @@ public class Customer : MonoBehaviour {
 
 	private void TakeDrink(GameObject mug) {
 		heldBeverage = mug;
-		// Set the mug's parent to the customer.
 		heldBeverage.transform.SetParent(gameObject.transform, true);
 		// Change the mug's tag so player/other customers can't interact with it any more.
 		heldBeverage.tag = "Delivered";
@@ -162,9 +189,9 @@ public class Customer : MonoBehaviour {
 		manager.Queue.RemoveFromQueue(gameObject);
 		int customerCounter = 0;
 
-		// Update the remaining customer's queue positions.
+		// Update the remaining customers' queue positions.
 		foreach (KeyValuePair<GameObject, Vector3> element in manager.Queue.Queue) {
-			element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(element.Key));
+			element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(element.Key.GetComponent<Customer>().QueuePosition);
 			element.Key.gameObject.GetComponent<Customer>().patienceLeft = maximumPatienceLeft + ++customerCounter;
 		}
 	}

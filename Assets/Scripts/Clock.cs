@@ -12,11 +12,16 @@ public class Clock : MonoBehaviour {
 
 	private GameStateManager gameStateManager = null;
 
+	/// <summary>
+	/// Finds scripts from objects in the scene.
+	/// </summary>
 	private void Start() {
 		gameStateManager = GameObject.FindGameObjectWithTag("GameStateManager").GetComponent<GameStateManager>();
 	}
 
-	// Update is called once per frame
+	/// <summary>
+	/// Updates time each frame.
+	/// </summary>
 	private void Update() {
 		if (gameStateManager.GameState != GameStateManager.GameStates.Gameplay) {
 			// Only count if we're in the gameplay state.

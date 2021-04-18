@@ -6,11 +6,15 @@ public interface IButton {
 
 public class Button : MonoBehaviour, IButton {
 	/// <summary>
-	/// The object receiving a call from the button.
+	/// The object(s) receiving a call from this button.
 	/// </summary>
 	[SerializeField]
 	private GameObject[] receivers = { null };
 
+	/// <summary>
+	/// Notifies all receivers of a button press.
+	/// </summary>
+	/// <param name="caller"> Button being pressed. </param>
 	public void ButtonPressed(Button caller) {
 		foreach (GameObject receiver in receivers) {
 			receiver.GetComponent<IButton>().ButtonPressed(this);

@@ -1,32 +1,37 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Instantiates an object selected from a collection.
+/// </summary>
 public class Dispenser : MonoBehaviour, IButton {
-	[SerializeField]
-	private Transform spawnPoint = null;
-
 	[SerializeField]
 	public GameObject[] items = null;
 
+	[SerializeField]
+	private Transform spawnPoint = null;
+
 	private Dictionary<string, GameObject> itemsToSpawn = new Dictionary<string, GameObject>();
 
-	private void Start() {
-		// Add all spawnable items to dictionary.
-		for (int i = 0; i < items.Length; ++i) {
-			itemsToSpawn.Add(items[i].tag, items[i]);
+	/// <summary>
+	/// Spawns an items based on the calling button's tag.
+	/// </summary>
+	/// <param name="callingButton"> Button calling this. </param>
+	public void ButtonPressed(Button callingButton) {
+		// Check IButton is implemented in object that called here.
+		if (callingButton.GetComponent<IButton>() != null) {
+			if (itemsToSpawn.ContainsKey(callingButton.tag)) {
+				Instantiate(itemsToSpawn[callingButton.tag], spawnPoint.position, Quaternion.LookRotation(Vector3.up, Vector3.forward));
+			}
 		}
 	}
 
 	/// <summary>
-	/// Spawns an item.
+	/// Populate dictionary with items to dispense.
 	/// </summary>
-	public void ButtonPressed(Button caller) {
-		// Check IButton is implemented in object that called here.
-		if (caller.gameObject.GetComponent<IButton>() != null) {
-			// Make sure the item to spawn exists.
-			if (itemsToSpawn.ContainsKey(caller.tag)) {
-				Instantiate(itemsToSpawn[caller.tag], spawnPoint.position, Quaternion.LookRotation(Vector3.up, Vector3.forward));
-			}
+	private void Start() {
+		for (int i = 0; i < items.Length; ++i) {
+			itemsToSpawn.Add(items[i].tag, items[i]);
 		}
 	}
 }

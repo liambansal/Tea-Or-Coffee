@@ -3,6 +3,9 @@ using UnityEngine;
 using Valve.VR.InteractionSystem;
 
 public class Mug : MonoBehaviour {
+	/// <summary>
+	/// Type of beverage held within the mug.
+	/// </summary>
 	public Beverages.Beverage Beverage { get { return beverage; } private set { } }
 
 	private enum BREW_STATES {
@@ -10,20 +13,29 @@ public class Mug : MonoBehaviour {
 		BREWED,
 		SPOILED,
 		COUNT
-	} BREW_STATES brewState = BREW_STATES.EMPTY;
+	};
+	private BREW_STATES brewState = BREW_STATES.EMPTY;
 
+	/// <summary>
+	/// Type of beverage held within the mug.
+	/// </summary>
 	private Beverages.Beverage beverage = new Beverages.Beverage();
 
+	/// <summary>
+	/// A reference to the beverage class.
+	/// </summary>
 	private Beverages beverageClass = null;
 	private Player player = null;
 
 	[SerializeField]
 	private GameObject mugLiquid = null;
 
+	/// <summary>
+	/// Creates an unknown beverage.
+	/// </summary>
 	private void Start() {
 		beverageClass = GameObject.FindGameObjectWithTag("BeverageClass").GetComponent<Beverages>();
 		player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-		// Create unknown beverage.
 		beverage.name = "Unknown";
 		beverage.recipeType = Beverages.RecipeTypes.Unknown;
 		beverage.ingredients = new Beverages.Ingredient[beverageClass.ingredients.Length];
@@ -36,6 +48,9 @@ public class Mug : MonoBehaviour {
 		beverage.ingredients[4].count = 0;
 	}
 
+	/// <summary>
+	/// Raises the mug's liquid once brewed/spoiled.
+	/// </summary>
 	private void Update() {
 		if (brewState == BREW_STATES.BREWED ||
 			brewState == BREW_STATES.SPOILED) {
@@ -49,6 +64,10 @@ public class Mug : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Triggers as something is placed into the mug.
+	/// </summary>
+	/// <param name="collision"> Colliding collider. </param>
 	private void OnTriggerEnter(Collider collision) {
 		if (collision.transform.IsChildOf(player.gameObject.transform)) {
 			// Don't add ingredients held by player.
@@ -61,22 +80,21 @@ public class Mug : MonoBehaviour {
 				AddIngredient(ingredient);
 				// Destroy the ingredient through its parent gameObject.
 				Destroy(collision.gameObject.transform.parent.gameObject);
-				UpdateBrewState();
+				IdentifyBeverage();
 			}
 		}
 	}
 
 	/// <summary>
-	/// Tries adding an ingredient to the beverage.
+	/// Adds an ingredient to the mug.
 	/// </summary>
 	/// <param name="ingredient"> Ingredient to add. </param>
 	private void AddIngredient(Beverages.Ingredient ingredient) {
-		// Accept the first recipe type to contact.
+		// Accept the first recipe type to come into contact with.
 		if (beverage.recipeType == Beverages.RecipeTypes.Unknown) {
 			beverage.recipeType = ingredient.ownerRecipe;
 		}
 
-		// Find collided ingredient among the beverage's ingredients.
 		for (int i = 0; i < beverage.ingredients.Length; ++i) {
 			if (beverage.ingredients[i].name == ingredient.name) {
 				beverage.ingredients[i].isAdded = true;
@@ -86,8 +104,10 @@ public class Mug : MonoBehaviour {
 		}
 	}
 
-	private void UpdateBrewState() {
-		// Keeps track of possible beverages to be brewed.
+	/// <summary>
+	/// Figures out which beverage is in the mug.
+	/// </summary>
+	private void IdentifyBeverage() {
 		LinkedList<Beverages.Beverage> brewedBeverages = new LinkedList<Beverages.Beverage>();
 
 		// Loops through all beverages that can be made.
@@ -95,13 +115,12 @@ public class Mug : MonoBehaviour {
 			// Stores the beverage recipe the player could be trying to make.
 			Beverages.Beverage possibleBeverage = beverageClass.recipes[beverageClass.beverageKeys[i]];
 
-			if (CheckWhatsBrewing(ref possibleBeverage)) {
+			if (IsBrewing(ref possibleBeverage)) {
 				brewedBeverages.AddLast(possibleBeverage);
 			}
 		}
 
 		if (brewedBeverages.Count > 0) {
-			// The beverage with the most ingredients added.
 			int largestBrew = 0;
 			LinkedListNode<Beverages.Beverage> node = brewedBeverages.First;
 			Beverages.Beverage brewedBeverage = node.Value;
@@ -133,28 +152,30 @@ public class Mug : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Checks if the mug is holding a certain type of beverage.
+	/// Checks if the mug could contain a certain type of beverage.
 	/// </summary>
 	/// <param name="possibleBeverage"> Beverage to compare mug's contents to. </param>
 	/// <returns> True if the argument matches the mug's beverage type. </returns>
-	private bool CheckWhatsBrewing(ref Beverages.Beverage possibleBeverage) {
+	private bool IsBrewing(ref Beverages.Beverage possibleBeverage) {
 		// Only check recipe types matching beverage type.
 		if (possibleBeverage.recipeType != beverage.recipeType) {
 			return false;
 		}
 
 		foreach (Beverages.Ingredient ingredient in beverage.ingredients) {
-			// Is an ingredient apart of the argument recipe.
-			bool inRecipe = false;
+			bool ingredientInRecipe = false;
 
+			
 			for (int j = 0; j < possibleBeverage.ingredients.Length; ++j) {
+				// Check the possible beverage's ingredients against the mug's ingredients.
 				if (ingredient.name == possibleBeverage.ingredients[j].name) {
-					inRecipe = true;
+					ingredientInRecipe = true;
 
 					if (ingredient.isAdded && ingredient.count == possibleBeverage.ingredients[j].count) {
 						break;
 					} else if (ingredient.isAdded && ingredient.count > possibleBeverage.ingredients[j].count) {
 						if (brewState == BREW_STATES.BREWED) {
+							// Spoil if it's already brewed.
 							brewState = BREW_STATES.SPOILED;
 						}
 
@@ -167,7 +188,7 @@ public class Mug : MonoBehaviour {
 			}
 
 			// Check if an ingredient has been added that wasn't found in the recipe.
-			if (!inRecipe && ingredient.count > 0) {
+			if (!ingredientInRecipe && ingredient.count > 0) {
 				if (brewState == BREW_STATES.BREWED) {
 					brewState = BREW_STATES.SPOILED;
 				}

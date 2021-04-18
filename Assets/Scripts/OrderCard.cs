@@ -2,7 +2,20 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Represents the beverage ordered by a customer.
+/// </summary>
 public class OrderCard : MonoBehaviour {
+	public Vector3 QueuePosition {
+		get {
+			Vector3 queuePosition = Vector3.zero;
+			queue.Queue.TryGetValue(gameObject, out queuePosition);
+			return queuePosition;
+		}
+		private set {
+		}
+	}
+
 	/// <summary>
 	/// Has the layer touched this gameobject?
 	/// </summary>
@@ -19,6 +32,10 @@ public class OrderCard : MonoBehaviour {
 	private ObjectQueue queue = null;
 	private Beverages.Beverage beverage;
 
+	/// <summary>
+	/// Chooses a beverage for the card to display.
+	/// </summary>
+	/// <param name="setBeverage"> Beverage to display. </param>
 	public void SetOrder(Beverages.Beverage setBeverage) {
 		beverage = setBeverage;
 		beverageImage.sprite = beverage.image;
@@ -30,28 +47,34 @@ public class OrderCard : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Adds the card to the card queue.
+	/// </summary>
 	private void Start() {
 		queue = GameObject.FindGameObjectWithTag("CardQueue").GetComponent<ObjectQueue>();
 
 		if (queue.AddToQueue(gameObject, true)) {
-			transform.position = queue.GetPosition(gameObject);
+			transform.position = QueuePosition;
 		}
 	}
 
+	/// <summary>
+	/// Handles keeping/removing the card in/from the queue.
+	/// </summary>
 	private void Update() {
-		// Check if player has picked up the card.
+		// Check if player has picked up the card. Statement triggers once.
 		if (!touchedByPlayer && gameObject.transform.parent != null) {
 			touchedByPlayer = true;
 			queue.RemoveFromQueue(gameObject);
 
 			// Update queue positions for remaining queue elements.
 			foreach (KeyValuePair<GameObject, Vector3> element in queue.Queue) {
-				element.Key.gameObject.transform.position = queue.GetPosition(element.Key);
+				element.Key.gameObject.transform.position = element.Key.GetComponent<OrderCard>().QueuePosition;
 			}
 		}
 
 		if (queue.Queue.ContainsKey(gameObject)) {
-			transform.position = queue.GetPosition(gameObject);
+			transform.position = QueuePosition;
 			transform.rotation = Quaternion.identity;
 			GetComponent<Rigidbody>().Sleep();
 		}
