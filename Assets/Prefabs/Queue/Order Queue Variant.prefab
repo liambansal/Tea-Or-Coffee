@@ -90,7 +90,7 @@ PrefabInstance:
     - target: {fileID: 5571387161167663027, guid: 5009a48685ae28c45881b705d0699fa3,
         type: 3}
       propertyPath: maximumQueuePositions
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5571387161167663027, guid: 5009a48685ae28c45881b705d0699fa3,
         type: 3}

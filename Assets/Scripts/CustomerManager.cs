@@ -7,7 +7,7 @@ public class CustomerManager : MonoBehaviour {
 
 	private int spawnTime = 0;
 	private int lastSpawnTime = 0;
-	private const int maxCustomers = 40;
+	private const int maxCustomers = 35;
 
 	private LinkedList<GameObject> customers = new LinkedList<GameObject>();
 	private LinkedList<GameObject> emptyChairs = new LinkedList<GameObject>();

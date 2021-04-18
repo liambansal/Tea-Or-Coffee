@@ -16,9 +16,9 @@ public class Customer : MonoBehaviour {
 
 	private static int customersServed = 0;
 	private int orderNumber = 0;
-	private const float maximumPatienceLeft = 40.0f;
+	private const float maximumPatienceLeft = 15.0f;
 	private float drinkTime = 60.0f;
-	private float patienceLeft = 40.0f;
+	private float patienceLeft = 15.0f;
 
 	private bool hasOrdered = false;
 
@@ -92,14 +92,20 @@ public class Customer : MonoBehaviour {
 					OrderDrink();
 				}
 
-				patienceLeft -= Time.deltaTime;
+				const float touchingDistance = 0.1f;
 
-				if (patienceLeft <= 0.0f) {
-					customerState = State.Leaving;
-				}
+				// If at front of queue.
+				if (Vector3.Distance(transform.position, manager.Queue.transform.position) <= touchingDistance) {
+					patienceLeft -= Time.deltaTime;
 
-				if (hasOrdered && !IsServed && coaster.Beverage && coaster.Beverage.CompareTag(Order)) {
-					TakeDrink(coaster.Beverage);
+					if (patienceLeft <= 0.0f) {
+						LeaveQueue();
+						customerState = State.Leaving;
+					}
+
+					if (hasOrdered && !IsServed && coaster.Beverage && coaster.Beverage.CompareTag(Order)) {
+						TakeDrink(coaster.Beverage);
+					}
 				}
 
 				break;
@@ -147,6 +153,12 @@ public class Customer : MonoBehaviour {
 		heldBeverage.tag = "Delivered";
 		customerState = State.Served;
 		Pay();
+		LeaveQueue();
+		Vector3 chairPosition = manager.FindChair().gameObject.transform.position;
+		GetComponent<NavMeshAgent>().SetDestination(chairPosition);
+	}
+
+	private void LeaveQueue() {
 		manager.Queue.RemoveFromQueue(gameObject);
 		int customerCounter = 0;
 
@@ -155,9 +167,6 @@ public class Customer : MonoBehaviour {
 			element.Key.gameObject.GetComponent<NavMeshAgent>().SetDestination(manager.Queue.GetPosition(element.Key));
 			element.Key.gameObject.GetComponent<Customer>().patienceLeft = maximumPatienceLeft + ++customerCounter;
 		}
-
-		Vector3 chairPosition = manager.FindChair().gameObject.transform.position;
-		GetComponent<NavMeshAgent>().SetDestination(chairPosition);
 	}
 
 	private void OrderDrink() {
@@ -167,8 +176,8 @@ public class Customer : MonoBehaviour {
 	}
 
 	private void Pay() {
-		Vector3 ordservingMat = GameObject.FindGameObjectWithTag("ServingMat").transform.position;
-		Instantiate(cash, ordservingMat + Vector3.up, Quaternion.identity);
+		Vector3 servingCoaster = GameObject.FindGameObjectWithTag("ServingMat").transform.position;
+		Instantiate(cash, servingCoaster + Vector3.up, Quaternion.identity);
 		Text scoreText = GameObject.FindGameObjectWithTag("CustomersServedScore").GetComponent<Text>();
 		scoreText.text = (++customersServed).ToString();
 	}

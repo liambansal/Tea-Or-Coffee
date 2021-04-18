@@ -60,10 +60,10 @@ public class ObjectQueue : MonoBehaviour {
 	private void RefreshPositions() {
 		GameObject[] queueCopy = new GameObject[Queue.Count];
 		Queue.Keys.CopyTo(queueCopy, 0);
-		int cardCount = 0;
+		int ObjectCount = 0;
 
 		foreach (GameObject element in queueCopy) {
-			lastQueuePosition = transform.position + queueDirection * queueGapDistance * cardCount++;
+			lastQueuePosition = transform.position + queueDirection * queueGapDistance * ObjectCount++;
 			Queue[element] = lastQueuePosition;
 		}
 	}
