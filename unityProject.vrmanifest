@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.teaorcoffee.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "G:\\University - Active Projects\\Tea-Or-Coffee\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "M:\\Tim's PC\\All Stuff\\Main\\Work\\Uni\\Year 2\\Experimental Games\\Lecture 2\\Unity Project\\Tea-Or-Coffee\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "Tea or Coffee [Testing]"
