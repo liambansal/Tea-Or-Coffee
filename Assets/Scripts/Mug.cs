@@ -55,7 +55,7 @@ public class Mug : MonoBehaviour {
 		if (brewState == BREW_STATES.BREWED ||
 			brewState == BREW_STATES.SPOILED) {
 			const float zStart = 0.0f;
-			const float zEnd = 1.1f;
+			const float zEnd = 1.0f;
 			// Slowly raises the level of liquid within the mug. Z is pointing up.
 			mugLiquid.transform.localPosition =
 				new Vector3(mugLiquid.transform.localPosition.x,
