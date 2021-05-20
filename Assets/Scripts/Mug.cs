@@ -8,12 +8,6 @@ public class Mug : MonoBehaviour {
 	/// </summary>
 	public Beverages.Beverage Beverage { get { return beverage; } private set { } }
 
-	/// <summary>
-	/// The object's desired default rotation.
-	/// Set to correct the models coordinate system.
-	/// </summary>
-	private Quaternion desiredRotation = Quaternion.identity;
-
 	private enum BREW_STATES {
 		EMPTY,
 		BREWED,
@@ -35,10 +29,6 @@ public class Mug : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject mugLiquid = null;
-
-	private void Awake() {
-		desiredRotation = Quaternion.LookRotation(Vector3.up, Vector3.forward);
-	}
 
 	/// <summary>
 	/// Creates an unknown beverage.
@@ -71,10 +61,6 @@ public class Mug : MonoBehaviour {
 				new Vector3(mugLiquid.transform.localPosition.x,
 				mugLiquid.transform.localPosition.y,
 				Mathf.Lerp(zStart, zEnd, mugLiquid.transform.localPosition.z + Time.deltaTime));
-		}
-
-		if (transform.IsChildOf(player.gameObject.transform)) {
-			transform.rotation = desiredRotation;
 		}
 	}
 
